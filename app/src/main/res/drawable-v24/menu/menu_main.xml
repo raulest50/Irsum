@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_settings" android:orderInCategory="100" android:title="@string/action_settings" app:showAsAction="never"/>
+    <item android:id="@+id/parametros" android:orderInCategory="300" android:title="Parametros" app:showAsAction="ifRoom"/>
+    <item android:id="@+id/reportar" android:orderInCategory="200" android:title="Reportar" app:showAsAction="ifRoom"/>
+    <item android:id="@+id/imprimir" android:orderInCategory="100" android:title="Imprimir" app:showAsAction="ifRoom"/>
+</menu>
