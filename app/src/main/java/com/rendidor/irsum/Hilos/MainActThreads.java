@@ -1,10 +1,13 @@
 package com.rendidor.irsum.Hilos;
 
+import com.rendidor.irsum.Comunicaciones.InfoComm;
+import com.rendidor.irsum.Definiciones.Producto;
+import com.rendidor.irsum.Definiciones.Venta;
+import com.rendidor.irsum.MainAct;
+
+import java.util.ArrayList;
 import java.util.List;
-import rendidor.irsum.Comunicaciones.InfoComm;
-import rendidor.irsum.Definiciones.Producto;
-import rendidor.irsum.Definiciones.Venta;
-import rendidor.irsum.MainAct;
+
 
 public class MainActThreads {
     MainAct ActMain;
@@ -18,7 +21,7 @@ public class MainActThreads {
     public void RegistrarProducto(final String Busqueda, final String tipo, final List<Venta> lv) {
         new Thread() {
             public void run() {
-                List<Producto> lp = MainActThreads.this.ifc.BuscarProducto(Busqueda, tipo);
+                List<Producto> lp = (List<Producto>) MainActThreads.this.ifc.BuscarProducto(Busqueda, tipo);
                 if (lp.isEmpty() || ((Producto) lp.get(0)).getCodigo().equals("NNNRRR")) {
                     MainActThreads.this.MostrarWarningNocod();
                     return;

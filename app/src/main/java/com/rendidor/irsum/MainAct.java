@@ -53,19 +53,19 @@ public class MainAct extends SuperAct {
     /* access modifiers changed from: protected */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView((int) R.layout.act_main);
+        setContentView(R.layout.act_main);
         this.Host = getSharedPreferences("configuracion_irsum", 0).getString("host", "http://192.168.0.13:8084/Servidor_granero/Vestibulo");
-        this.botonRegistrar = (Button) findViewById(R.id.bRegistrar);
-        this.botonCancelar = (Button) findViewById(R.id.bCancelar);
-        this.botonManual = (Button) findViewById(R.id.buttonManual);
-        this.botonNoCod = (Button) findViewById(R.id.buttonNoCod);
-        this.etx = (EditText) findViewById(R.id.campo_buscar);
-        this.rv = (RecyclerView) findViewById(R.id.ListaProductos);
+        this.botonRegistrar = findViewById(R.id.bRegistrar);
+        this.botonCancelar =  findViewById(R.id.bCancelar);
+        this.botonManual =  findViewById(R.id.buttonManual);
+        this.botonNoCod = findViewById(R.id.buttonNoCod);
+        this.etx = findViewById(R.id.campo_buscar);
+        this.rv = findViewById(R.id.ListaProductos);
         this.Llm = new LinearLayoutManager(this);
         this.rv.setLayoutManager(this.Llm);
-        this.LCobro = (TextView) findViewById(R.id.LCobro);
+        this.LCobro = findViewById(R.id.LCobro);
         this.listaVenta = new ArrayList();
-        set_cursor(this);
+        start_set_cursor_thread(this);
         this.mat = new MainActThreads(this, this.Host);
         set_etx_listener();
         this.botonRegistrar.setOnClickListener(new OnClickListener() {
@@ -123,11 +123,14 @@ public class MainAct extends SuperAct {
     /* access modifiers changed from: protected */
     public void onRestoreInstanceState(Bundle savedState) {
         super.onRestoreInstanceState(savedState);
-        MostrarListaVentas(savedState.getParcelableArrayList("lp"));
+        MostrarListaVentas(savedState.<Venta>getParcelableArrayList("lp"));
     }
 
+    /**
+     * cierra el teclado en pantalla
+     */
     public void close_softkey() {
-        ((InputMethodManager) getSystemService("input_method")).hideSoftInputFromWindow(this.etx.getWindowToken(), 0);
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.etx.getWindowToken(), 0);
     }
 
     public void MostrarListaVentas(List<Venta> lv) {
@@ -186,10 +189,17 @@ public class MainAct extends SuperAct {
         }.start();
     }
 
-    public void set_cursor(MainAct ActMain) {
+    /**
+     * cada segundo hace un request focus del campo de texto para el lector de barras.
+     * lo hace de manera indefinida mientras la app este abierta
+     * @param ActMain actividad principal o contexto principal
+     */
+    public void start_set_cursor_thread(MainAct ActMain) {
         Thread t = new Thread() {
             public void run() {
                 while (true) {
+                    // siempre que un hilo interactue con la UI debe usar el metodo runOnUiThread
+                    // de lo contratio ocurrira una excenpcion.
                     MainAct.this.runOnUiThread(new Runnable() {
                         public void run() {
                             if (MainAct.this.tipoBusqueda == 0) {
@@ -209,6 +219,11 @@ public class MainAct extends SuperAct {
         t.start();
     }
 
+    /**
+     * crea un key listener para el campo de codigo de barras. si detecta ENTER
+     * inicia la busqueda del producto con el codigo especificado en el campo de texto etc.
+     * para las demas teclas no ejecuta ninguna accion.
+     */
     public void set_etx_listener() {
         this.etx.setOnKeyListener(new OnKeyListener() {
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
@@ -234,8 +249,10 @@ public class MainAct extends SuperAct {
     }
 
     public void MostrarToast(String tex) {
-        Toast.makeText(getApplicationContext(), tex, 0);
+        Toast toast = Toast.makeText(getApplicationContext(), tex, Toast.LENGTH_LONG);
+        toast.show();
     }
+
 
     public void CalcularSuma() {
         int suma = 0;
@@ -248,12 +265,14 @@ public class MainAct extends SuperAct {
         }
     }
 
+
     private void startVoiceRecognitionActivity() {
         Intent intent = new Intent("android.speech.action.RECOGNIZE_SPEECH");
         intent.putExtra("android.speech.extras.SPEECH_INPUT_MINIMUM_LENGTH_MILLIS", "android.speech.extras.SPEECH_INPUT_MINIMUM_LENGTH_MILLIS");
         intent.putExtra("android.speech.extra.PROMPT", "Diga El Valor :)");
         startActivityForResult(intent, REQUEST_CODE);
     }
+
 
     /* access modifiers changed from: protected */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -268,12 +287,13 @@ public class MainAct extends SuperAct {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+
     public void DialogManual() {
         View promptView = LayoutInflater.from(this.context).inflate(R.layout.addpro_nocod, null);
         Builder alertDialogBuilder = new Builder(this.context);
         alertDialogBuilder.setView(promptView);
         final EditText EtxManualCodi = (EditText) promptView.findViewById(R.id.etxValCodi);
-        C02649 r0 = new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener r0 = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 MainAct.this.BuscarP(EtxManualCodi.getText().toString());
             }
@@ -293,8 +313,9 @@ public class MainAct extends SuperAct {
         Button bt7 = (Button) promptView.findViewById(R.id.appk7);
         Button bt8 = (Button) promptView.findViewById(R.id.appk8);
         Button bt9 = (Button) promptView.findViewById(R.id.appk9);
+        Button bt0 = (Button) promptView.findViewById(R.id.appk0);
         Button btb = (Button) promptView.findViewById(R.id.appkb);
-        SetListenerToCustomNumKey((Button) promptView.findViewById(R.id.appk0), "0", EtxManualCodi);
+        SetListenerToCustomNumKey(bt0, "0", EtxManualCodi);
         SetListenerToCustomNumKey(bt1, "1", EtxManualCodi);
         SetListenerToCustomNumKey(bt2, "2", EtxManualCodi);
         SetListenerToCustomNumKey(bt3, "3", EtxManualCodi);
@@ -313,7 +334,7 @@ public class MainAct extends SuperAct {
         alertDialogBuilder.setView(promptView);
         EditText etxUnitVal = (EditText) promptView.findViewById(R.id.userInput);
         final EditText editText = etxUnitVal;
-        C025011 r0 = new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener r0 = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 int valorss;
                 try {

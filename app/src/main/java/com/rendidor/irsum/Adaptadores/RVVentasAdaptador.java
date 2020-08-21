@@ -2,9 +2,9 @@ package com.rendidor.irsum.Adaptadores;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.p003v7.app.AlertDialog.Builder;
-import android.support.p003v7.widget.RecyclerView.Adapter;
-import android.support.p003v7.widget.RecyclerView.ViewHolder;
+import android.support.v7.app.AlertDialog.Builder;
+import android.support.v7.widget.RecyclerView.Adapter;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,12 +12,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import java.util.List;
-import rendidor.irsum.C0267R;
-import rendidor.irsum.Definiciones.Venta;
-import rendidor.irsum.MainAct;
 
-public class RVVentasAdaptador extends Adapter<VentaViewHolder> {
+import com.rendidor.irsum.Definiciones.Venta;
+
+import java.util.List;
+
+import com.rendidor.irsum.Definiciones.Venta;
+import com.rendidor.irsum.MainAct;
+import com.rendidor.irsum.R;
+
+public class RVVentasAdaptador extends Adapter<RVVentasAdaptador.VentaViewHolder> {
     public Context context;
     public List<Venta> listaVentas;
     public MainAct mact;
@@ -34,13 +38,13 @@ public class RVVentasAdaptador extends Adapter<VentaViewHolder> {
 
         public VentaViewHolder(View itemView) {
             super(itemView);
-            this.Descripcion = (TextView) itemView.findViewById(C0267R.C0269id.NombreVenta);
-            this.PvPublico = (TextView) itemView.findViewById(C0267R.C0269id.PvPublico);
-            this.BRetirar = (Button) itemView.findViewById(C0267R.C0269id.BRetirar);
-            this.UPN = (Button) itemView.findViewById(C0267R.C0269id.upn);
-            this.Num = (Button) itemView.findViewById(C0267R.C0269id.bNum);
-            this.f17Pr = (TextView) itemView.findViewById(C0267R.C0269id.labpr);
-            this.BRetirar.setOnClickListener(new OnClickListener(RVVentasAdaptador.this) {
+            this.Descripcion = (TextView) itemView.findViewById(R.id.NombreVenta);
+            this.PvPublico = (TextView) itemView.findViewById(R.id.PvPublico);
+            this.BRetirar = (Button) itemView.findViewById(R.id.BRetirar);
+            this.UPN = (Button) itemView.findViewById(R.id.upn);
+            this.Num = (Button) itemView.findViewById(R.id.bNum);
+            this.f17Pr = (TextView) itemView.findViewById(R.id.labpr);
+            this.BRetirar.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     try {
                         int quan = ((Venta) RVVentasAdaptador.this.listaVentas.get(VentaViewHolder.this.getLayoutPosition())).getCant();
@@ -60,7 +64,7 @@ public class RVVentasAdaptador extends Adapter<VentaViewHolder> {
                     }
                 }
             });
-            this.UPN.setOnClickListener(new OnClickListener(RVVentasAdaptador.this) {
+            this.UPN.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     ((Venta) RVVentasAdaptador.this.listaVentas.get(VentaViewHolder.this.getLayoutPosition())).setCant(((Venta) RVVentasAdaptador.this.listaVentas.get(VentaViewHolder.this.getLayoutPosition())).getCant() + 1);
                     RVVentasAdaptador.this.notifyItemChanged(VentaViewHolder.this.getLayoutPosition());
@@ -68,14 +72,14 @@ public class RVVentasAdaptador extends Adapter<VentaViewHolder> {
                     RVVentasAdaptador.this.triggerSuma();
                 }
             });
-            this.Num.setOnClickListener(new OnClickListener(RVVentasAdaptador.this) {
+            this.Num.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    View promptView = LayoutInflater.from(RVVentasAdaptador.this.context).inflate(C0267R.layout.popup, null);
+                    View promptView = LayoutInflater.from(RVVentasAdaptador.this.context).inflate(R.layout.popup, null);
                     Builder alertDialogBuilder = new Builder(RVVentasAdaptador.this.context);
                     alertDialogBuilder.setView(promptView);
-                    EditText input = (EditText) promptView.findViewById(C0267R.C0269id.userInput);
+                    EditText input = (EditText) promptView.findViewById(R.id.userInput);
                     final EditText editText = input;
-                    C02392 r0 = new DialogInterface.OnClickListener() {
+                    DialogInterface.OnClickListener metodoOK = new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             int canti = Integer.parseInt(editText.getText().toString());
                             if (canti > 0) {
@@ -91,23 +95,23 @@ public class RVVentasAdaptador extends Adapter<VentaViewHolder> {
                             RVVentasAdaptador.this.triggerSuma();
                         }
                     };
-                    alertDialogBuilder.setCancelable(false).setPositiveButton((CharSequence) "OK", (DialogInterface.OnClickListener) r0).setNegativeButton((CharSequence) "Cancel", (DialogInterface.OnClickListener) new DialogInterface.OnClickListener() {
+                    alertDialogBuilder.setCancelable(false).setPositiveButton((CharSequence) "OK", metodoOK).setNegativeButton((CharSequence) "Cancel", (DialogInterface.OnClickListener) new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                         }
                     });
                     alertDialogBuilder.create().show();
-                    Button bt1 = (Button) promptView.findViewById(C0267R.C0269id.appk1);
-                    Button bt2 = (Button) promptView.findViewById(C0267R.C0269id.appk2);
-                    Button bt3 = (Button) promptView.findViewById(C0267R.C0269id.appk3);
-                    Button bt4 = (Button) promptView.findViewById(C0267R.C0269id.appk4);
-                    Button bt5 = (Button) promptView.findViewById(C0267R.C0269id.appk5);
-                    Button bt6 = (Button) promptView.findViewById(C0267R.C0269id.appk6);
-                    Button bt7 = (Button) promptView.findViewById(C0267R.C0269id.appk7);
-                    Button bt8 = (Button) promptView.findViewById(C0267R.C0269id.appk8);
-                    Button bt9 = (Button) promptView.findViewById(C0267R.C0269id.appk9);
-                    Button btb = (Button) promptView.findViewById(C0267R.C0269id.appkb);
-                    RVVentasAdaptador.this.SetListenerToCustomNumKey((Button) promptView.findViewById(C0267R.C0269id.appk0), "0", input);
+                    Button bt1 = (Button) promptView.findViewById(R.id.appk1);
+                    Button bt2 = (Button) promptView.findViewById(R.id.appk2);
+                    Button bt3 = (Button) promptView.findViewById(R.id.appk3);
+                    Button bt4 = (Button) promptView.findViewById(R.id.appk4);
+                    Button bt5 = (Button) promptView.findViewById(R.id.appk5);
+                    Button bt6 = (Button) promptView.findViewById(R.id.appk6);
+                    Button bt7 = (Button) promptView.findViewById(R.id.appk7);
+                    Button bt8 = (Button) promptView.findViewById(R.id.appk8);
+                    Button bt9 = (Button) promptView.findViewById(R.id.appk9);
+                    Button btb = (Button) promptView.findViewById(R.id.appkb);
+                    RVVentasAdaptador.this.SetListenerToCustomNumKey((Button) promptView.findViewById(R.id.appk0), "0", input);
                     RVVentasAdaptador.this.SetListenerToCustomNumKey(bt1, "1", input);
                     RVVentasAdaptador.this.SetListenerToCustomNumKey(bt2, "2", input);
                     RVVentasAdaptador.this.SetListenerToCustomNumKey(bt3, "3", input);
@@ -130,7 +134,7 @@ public class RVVentasAdaptador extends Adapter<VentaViewHolder> {
     }
 
     public VentaViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        return new VentaViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(C0267R.layout.venta_lay, viewGroup, false));
+        return new VentaViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.venta_lay, viewGroup, false));
     }
 
     public void onBindViewHolder(VentaViewHolder pvh, int i) {

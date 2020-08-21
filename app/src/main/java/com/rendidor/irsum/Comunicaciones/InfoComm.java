@@ -2,26 +2,26 @@ package com.rendidor.irsum.Comunicaciones;
 
 import java.util.ArrayList;
 import java.util.List;
-import rendidor.irsum.Definiciones.Cliente;
-import rendidor.irsum.Definiciones.Producto;
-import rendidor.irsum.Definiciones.Proveedor;
+import com.rendidor.irsum.Definiciones.Cliente;
+import com.rendidor.irsum.Definiciones.Producto;
+import com.rendidor.irsum.Definiciones.Proveedor;
 
 public class InfoComm {
 
     /* renamed from: p */
-    public Poster f18p;
+    public Poster p;
 
     public InfoComm(String dirHost) {
-        this.f18p = new Poster(dirHost);
+        this.p = new Poster(dirHost);
     }
 
     public void ImprimirVenta(String venta) {
-        this.f18p.HacerPosterVentas("op=0&venta=" + venta);
+        this.p.HacerPosterVentas("op=0&venta=" + venta);
     }
 
     public List<Producto> BuscarProducto(String b, String tipo) {
         new ArrayList();
-        return GenerarLProductos(this.f18p.HacerPoster("op=1&type=" + tipo + "&search=" + b));
+        return GenerarLProductos(this.p.HacerPoster("op=1&type=" + tipo + "&search=" + b));
     }
 
     public List<Cliente> BuscarCliente(String b, String tipo) {

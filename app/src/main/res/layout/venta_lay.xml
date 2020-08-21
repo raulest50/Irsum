@@ -4,7 +4,7 @@
         <ScrollView android:id="@+id/scrollView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="0.8">
             <TextView android:textAppearance="?android:attr/textAppearanceLarge" android:textSize="22dp" android:id="@+id/NombreVenta" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Nombre del produto" android:layout_weight="10"/>
         </ScrollView>
-        <Button android:textSize="30dp" android:id="@+id/upn" android:background="@drawable/button" android:layout_width="wrap_content" android:layout_height="match_parent" android:text="+" android:singleLine="false"/>
+        <Button android:textSize="30dp" android:id="@+id/upn"  android:layout_width="wrap_content" android:layout_height="match_parent" android:text="+" android:singleLine="false"/>
         <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="0.2">
             <Button android:textSize="30dp" android:id="@+id/BRetirar" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-"/>
         </LinearLayout>
