@@ -96,7 +96,7 @@ public class MainAct extends SuperAct {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        EditText editText = (EditText) findViewById(R.id.campo_buscar);
+        EditText editText = findViewById(R.id.campo_buscar);
         switch (item.getItemId()) {
             case R.id.parametros /*2131493003*/:
                 startActivity(new Intent(this, ParamAct.class));
@@ -257,7 +257,7 @@ public class MainAct extends SuperAct {
     public void CalcularSuma() {
         int suma = 0;
         for (int i = 0; i < this.listaVenta.size(); i++) {
-            suma += ((Venta) this.listaVenta.get(i)).getCant() * ((Venta) this.listaVenta.get(i)).getPvPublico();
+            suma += (this.listaVenta.get(i)).getCant() * (this.listaVenta.get(i)).getPvPublico();
             this.LCobro.setText(Integer.toString(suma));
         }
         if (this.listaVenta.isEmpty()) {
@@ -278,7 +278,7 @@ public class MainAct extends SuperAct {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE && resultCode == -1) {
             try {
-                this.listaVenta.add(0, new Venta("Producto Invocado Por Voz", Integer.parseInt((String) data.getStringArrayListExtra("android.speech.extra.RESULTS").get(0))));
+                this.listaVenta.add(0, new Venta("Producto Invocado Por Voz", Integer.parseInt(data.getStringArrayListExtra("android.speech.extra.RESULTS").get(0))));
                 MostrarListaVentas(this.listaVenta);
             } catch (NumberFormatException e) {
                 MostrarToast("Debe decir solo un numero");
@@ -292,29 +292,29 @@ public class MainAct extends SuperAct {
         View promptView = LayoutInflater.from(this.context).inflate(R.layout.addpro_nocod, null);
         Builder alertDialogBuilder = new Builder(this.context);
         alertDialogBuilder.setView(promptView);
-        final EditText EtxManualCodi = (EditText) promptView.findViewById(R.id.etxValCodi);
+        final EditText EtxManualCodi = promptView.findViewById(R.id.etxValCodi);
         DialogInterface.OnClickListener r0 = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 MainAct.this.BuscarP(EtxManualCodi.getText().toString());
             }
         };
-        alertDialogBuilder.setCancelable(false).setPositiveButton((CharSequence) "OK", (DialogInterface.OnClickListener) r0).setNegativeButton((CharSequence) "Cancel", (DialogInterface.OnClickListener) new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setCancelable(false).setPositiveButton("OK", r0).setNegativeButton("Cancel",  new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
             }
         });
         alertDialogBuilder.create().show();
-        Button bt1 = (Button) promptView.findViewById(R.id.appk1);
-        Button bt2 = (Button) promptView.findViewById(R.id.appk2);
-        Button bt3 = (Button) promptView.findViewById(R.id.appk3);
-        Button bt4 = (Button) promptView.findViewById(R.id.appk4);
-        Button bt5 = (Button) promptView.findViewById(R.id.appk5);
-        Button bt6 = (Button) promptView.findViewById(R.id.appk6);
-        Button bt7 = (Button) promptView.findViewById(R.id.appk7);
-        Button bt8 = (Button) promptView.findViewById(R.id.appk8);
-        Button bt9 = (Button) promptView.findViewById(R.id.appk9);
-        Button bt0 = (Button) promptView.findViewById(R.id.appk0);
-        Button btb = (Button) promptView.findViewById(R.id.appkb);
+        Button bt1 = promptView.findViewById(R.id.appk1);
+        Button bt2 = promptView.findViewById(R.id.appk2);
+        Button bt3 = promptView.findViewById(R.id.appk3);
+        Button bt4 = promptView.findViewById(R.id.appk4);
+        Button bt5 = promptView.findViewById(R.id.appk5);
+        Button bt6 = promptView.findViewById(R.id.appk6);
+        Button bt7 = promptView.findViewById(R.id.appk7);
+        Button bt8 = promptView.findViewById(R.id.appk8);
+        Button bt9 = promptView.findViewById(R.id.appk9);
+        Button bt0 = promptView.findViewById(R.id.appk0);
+        Button btb = promptView.findViewById(R.id.appkb);
         SetListenerToCustomNumKey(bt0, "0", EtxManualCodi);
         SetListenerToCustomNumKey(bt1, "1", EtxManualCodi);
         SetListenerToCustomNumKey(bt2, "2", EtxManualCodi);
@@ -332,16 +332,14 @@ public class MainAct extends SuperAct {
         View promptView = LayoutInflater.from(this.context).inflate(R.layout.popup, null);
         Builder alertDialogBuilder = new Builder(this.context);
         alertDialogBuilder.setView(promptView);
-        EditText etxUnitVal = (EditText) promptView.findViewById(R.id.userInput);
+        EditText etxUnitVal = promptView.findViewById(R.id.userInput);
         final EditText editText = etxUnitVal;
         DialogInterface.OnClickListener r0 = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 int valorss;
                 try {
                     valorss = Integer.parseInt(editText.getText().toString());
-                } catch (NullPointerException e) {
-                    valorss = -1;
-                } catch (NumberFormatException e2) {
+                } catch (NullPointerException | NumberFormatException e) {
                     valorss = -1;
                 }
                 if (valorss > 0) {
@@ -350,23 +348,24 @@ public class MainAct extends SuperAct {
                 }
             }
         };
-        alertDialogBuilder.setCancelable(false).setPositiveButton((CharSequence) "OK", (DialogInterface.OnClickListener) r0).setNegativeButton((CharSequence) "Cancel", (DialogInterface.OnClickListener) new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setCancelable(false).setPositiveButton("OK", r0).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
             }
         });
         alertDialogBuilder.create().show();
-        Button bt1 = (Button) promptView.findViewById(R.id.appk1);
-        Button bt2 = (Button) promptView.findViewById(R.id.appk2);
-        Button bt3 = (Button) promptView.findViewById(R.id.appk3);
-        Button bt4 = (Button) promptView.findViewById(R.id.appk4);
-        Button bt5 = (Button) promptView.findViewById(R.id.appk5);
-        Button bt6 = (Button) promptView.findViewById(R.id.appk6);
-        Button bt7 = (Button) promptView.findViewById(R.id.appk7);
-        Button bt8 = (Button) promptView.findViewById(R.id.appk8);
-        Button bt9 = (Button) promptView.findViewById(R.id.appk9);
-        Button btb = (Button) promptView.findViewById(R.id.appkb);
-        SetListenerToCustomNumKey((Button) promptView.findViewById(R.id.appk0), "0", etxUnitVal);
+        Button bt1 = promptView.findViewById(R.id.appk1);
+        Button bt2 = promptView.findViewById(R.id.appk2);
+        Button bt3 = promptView.findViewById(R.id.appk3);
+        Button bt4 = promptView.findViewById(R.id.appk4);
+        Button bt5 = promptView.findViewById(R.id.appk5);
+        Button bt6 = promptView.findViewById(R.id.appk6);
+        Button bt7 = promptView.findViewById(R.id.appk7);
+        Button bt8 = promptView.findViewById(R.id.appk8);
+        Button bt9 = promptView.findViewById(R.id.appk9);
+        Button bt0 = promptView.findViewById(R.id.appk0);
+        Button btb = promptView.findViewById(R.id.appkb);
+        SetListenerToCustomNumKey(bt0, "0", etxUnitVal);
         SetListenerToCustomNumKey(bt1, "1", etxUnitVal);
         SetListenerToCustomNumKey(bt2, "2", etxUnitVal);
         SetListenerToCustomNumKey(bt3, "3", etxUnitVal);
@@ -383,10 +382,10 @@ public class MainAct extends SuperAct {
         View promptView = LayoutInflater.from(this.context).inflate(R.layout.warning_lay, null);
         Builder alertDialogBuilder = new Builder(this.context);
         alertDialogBuilder.setView(promptView);
-        alertDialogBuilder.setCancelable(false).setPositiveButton((CharSequence) "OK", (DialogInterface.OnClickListener) new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
             }
-        }).setNegativeButton((CharSequence) "OK", (DialogInterface.OnClickListener) new DialogInterface.OnClickListener() {
+        }).setNegativeButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
             }

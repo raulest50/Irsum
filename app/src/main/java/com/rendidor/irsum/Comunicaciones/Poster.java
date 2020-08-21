@@ -37,22 +37,15 @@ public class Poster {
                     in.close();
                 }
             } catch (MalformedURLException e) {
-                e = e;
+
                 URL url2 = url;
                 e.printStackTrace();
                 return serv_print;
-            } catch (IOException e2) {
-                e = e2;
-                URL url3 = url;
+            } catch (IOException e) {
                 e.printStackTrace();
                 return serv_print;
             }
-        } catch (MalformedURLException e3) {
-            e = e3;
-            e.printStackTrace();
-            return serv_print;
-        } catch (IOException e4) {
-            e = e4;
+        } catch (MalformedURLException e) {
             e.printStackTrace();
             return serv_print;
         }
@@ -84,18 +77,12 @@ public class Poster {
                 URL url2 = url;
                 e.printStackTrace();
                 return serv_print;
-            } catch (IOException e2) {
-                e = e2;
+            } catch (IOException e) {
                 URL url3 = url;
                 e.printStackTrace();
                 return serv_print;
             }
-        } catch (MalformedURLException e3) {
-            e = e3;
-            e.printStackTrace();
-            return serv_print;
-        } catch (IOException e4) {
-            e = e4;
+        } catch (MalformedURLException e) {
             e.printStackTrace();
             return serv_print;
         }

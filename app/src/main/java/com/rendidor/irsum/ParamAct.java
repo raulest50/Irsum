@@ -21,10 +21,10 @@ public class ParamAct extends SuperAct {
     /* access modifiers changed from: protected */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView((int) C0267R.layout.act_param);
-        this.volver = (Button) findViewById(C0267R.C0269id.Button_volver);
-        this.guardar = (Button) findViewById(C0267R.C0269id.Button_Save_Config);
-        this.txHost = (EditText) findViewById(C0267R.C0269id.Tx_Direccion);
+        setContentView((int) R.layout.act_param);
+        this.volver = (Button) findViewById(R.id.Button_volver);
+        this.guardar = (Button) findViewById(R.id.Button_Save_Config);
+        this.txHost = (EditText) findViewById(R.id.Tx_Direccion);
         this.pre = getSharedPreferences("configuracion_irsum", 0);
         this.edit = this.pre.edit();
         this.txHost.setText(this.pre.getString("host", ""));
@@ -43,7 +43,7 @@ public class ParamAct extends SuperAct {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(C0267R.C0270menu.menu_param, menu);
+        getMenuInflater().inflate(R.menu.menu_param, menu);
         return true;
     }
 

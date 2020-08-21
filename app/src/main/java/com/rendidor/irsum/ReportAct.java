@@ -18,11 +18,11 @@ public class ReportAct extends SuperAct {
     /* access modifiers changed from: protected */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView((int) C0267R.layout.act_report);
-        this.volver = (Button) findViewById(C0267R.C0269id.BotonVolverReporte);
-        this.borrar = (Button) findViewById(C0267R.C0269id.BotonBorrar);
-        this.enviar = (Button) findViewById(C0267R.C0269id.BotonEnviar);
-        this.reporte = (EditText) findViewById(C0267R.C0269id.TxReporte);
+        setContentView((int) R.layout.act_report);
+        this.volver = (Button) findViewById(R.id.BotonVolverReporte);
+        this.borrar = (Button) findViewById(R.id.BotonBorrar);
+        this.enviar = (Button) findViewById(R.id.BotonEnviar);
+        this.reporte = (EditText) findViewById(R.id.TxReporte);
         this.borrar.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 ReportAct.this.reporte.setText("");
@@ -36,7 +36,7 @@ public class ReportAct extends SuperAct {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(C0267R.C0270menu.menu_report, menu);
+        getMenuInflater().inflate(R.menu.menu_report, menu);
         return true;
     }
 
