@@ -25,6 +25,18 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude("META-INF/*.kotlin_module")
+    }
+
 }
 
 dependencies {
@@ -36,4 +48,23 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    // String interpolation like kotlin
+    compileOnly 'com.antkorwin:better-strings:0.4'
+    annotationProcessor 'com.antkorwin:better-strings:0.4'
+
+    // lib for http request with callbacks
+    // https://github.com/android-async-http/android-async-http
+    implementation 'com.loopj.android:android-async-http:1.4.11'
+
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.2'
+
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    //implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.8.1'
+
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.12'
+
 }

@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.os.Build;
+
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,23 +24,26 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 // explicacion de completable future
 // https://levelup.gitconnected.com/completablefuture-a-new-era-of-asynchronous-programming-86c2fe23e246
 
-public class ParamAct extends SuperAct {
+public class ParamAct extends AppCompatActivity {
     Editor edit;
     Button Button_Buscar_Satelink;
     SharedPreferences pre;
 
     Button Button_volver;
     TextView TXView_show_serverIP; // etiqueta para mostrar la direccion ip del servidor.
+
+    public String server_ip;
 
     public final String BLANK_IP_LABEL = "--- . --- . --- . ---";
 
@@ -60,19 +63,28 @@ public class ParamAct extends SuperAct {
         // java preference api
         this.pre = getSharedPreferences("configuracion_irsum", 0);
         this.edit = this.pre.edit();
-        this.TXView_show_serverIP.setText(this.pre.getString("host", BLANK_IP_LABEL));
+        this.server_ip = this.pre.getString("host", BLANK_IP_LABEL);
+        this.TXView_show_serverIP.setText(server_ip);
         //this.EditText_Host.setText(this.pre.getString("host", ""));
 
         // Button Listeners
         this.Button_Buscar_Satelink.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                BuscarSatelink();
+                sf.Scan();
             }
         });
 
         this.Button_volver.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 ParamAct.this.startActivity(new Intent(ParamAct.this, MainAct.class));
+            }
+        });
+
+        Button ts = findViewById(R.id.B_test_nj);
+        ts.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                test();
             }
         });
     }
@@ -86,14 +98,26 @@ public class ParamAct extends SuperAct {
         return super.onOptionsItemSelected(item);
     }
 
-
-    public void BuscarSatelink() {
-        sf.Scan();
+    /**
+     * para que el hilo que busca el servidor pueda modificar el textView que muestra
+     * la direccion ip del servidor. si no se usa runOnUiThread ocurre una excepcion.
+     * Hilos externos no pueden acceder la UI directamente
+     * @param txt
+     */
+    public void setTXView_show_serverIP(final String txt){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TXView_show_serverIP.setText(txt);
+            }
+        });
     }
+
 
     /**
      * La clase satelinkFinder contiene lo necesario para hacer una deteccion de la direccion
-     * ip de satelink (el servidor de nodejs) usando udp broadcasting
+     * ip de satelink (el servidor de nodejs) usando udp broadcasting. El TimeOut se configura
+     * en TIME_OUT_MILLIS
      */
     public class SatelinkFinder{
         // --- VARIABLES
@@ -110,18 +134,21 @@ public class ParamAct extends SuperAct {
 
         // --- CONSTANTES
         // tiempo de espera en milisegundos para escuchar respuesta del servidor
-        public int TIME_OUT_SEC = 7;
+        final public int TIME_OUT_MILLIS = 7000;
 
         // byte String que se envia a satelink por medio de udp para indicarle que envie su direccion ip
         final byte[] SATELINK_IP_COMMAND = "satelink.ip".getBytes();
 
-
+        /**
+         * temporizador que se invoca dentro de Scan() para implementar TimeOut
+         * usando solo la API de Thread.
+         */
         public class SFTimer extends Thread {
             public Thread udp_thread;
             @Override
             public void run() {
                 try {
-                    sleep(7000);
+                    sleep(TIME_OUT_MILLIS);
                     udp_thread.interrupt();
                 } catch (InterruptedException e) {
                     //e.printStackTrace();
@@ -143,10 +170,15 @@ public class ParamAct extends SuperAct {
             }
         }
 
-        // Executors.newSingleThreadExecutor().execute(() -> {});
-
         /**
-         *
+         * Se crean 2 hilos. El primer hilo genera al segundo el cual es un temporizador. despues
+         * de iniciar el temporizador, hara un llamado al metodo UDP_Broadcast para descubrir la
+         * ip del seridor. Si el primer hilo termina antes que se cumpla el temporizador, entonces
+         * para el temporizador con interrupt() y guarda la ip en preference, ademas de mostrarla
+         * en el respectivo textView. En caso contrario sera el temporizador el que hara interrupt
+         * del hilo buscador y guardara un String vacio como la ip para indicar que el servidor
+         * no se pudo encontrar. En la practica el udp boradcast es tan veloz que un timeout
+         * de mas de 2 o 3 segundos indica altisima probabilidad de que el servidor no este en operacion.
          */
         public void Scan(){
             if(!running) { // prevent more than one thread.
@@ -201,6 +233,14 @@ public class ParamAct extends SuperAct {
             return broadcast;
         }
 
+        /**
+         * Este es el metodo mas importante de la clase. Usando DatagramPacket hace un broadcast
+         * en la subred con un mensaje al que solo Satelink respondera. La respuesta de satelink
+         * contiene un mensaje que permite confirmar que es satelink y mas imoportante su direccion
+         * ip. de esta manera el cliente puede descubrir la ip del servidor sin ninguna informacion
+         * introducida por el usuario pero si es requisito estar en la misma subred.
+         * @return
+         */
         public String UDP_Broadcast(){
             running = true;
             String r = "";
@@ -246,6 +286,10 @@ public class ParamAct extends SuperAct {
             reset();
         }
 
+        /**
+         * reestablece algunos de los atributos de esta clase para que el hilo
+         * para descubrir el servidor pueda ser lanzado de nuevo.
+         */
         public void reset(){
             this.estado=0;
             this.running=false;
@@ -259,13 +303,29 @@ public class ParamAct extends SuperAct {
         }
     }
 
-    public void setTXView_show_serverIP(final String txt){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                TXView_show_serverIP.setText(txt);
+    public void test(){
+        //String url = "http://${server_ip}/buscar_producto";
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                HttpUrl.Builder urlBuilder = HttpUrl.parse("http://${server_ip}:3000/buscar_producto").newBuilder();
+                urlBuilder.addQueryParameter("codigo", "1234");
+                //urlBuilder.addQueryParameter("user", "vogella");
+                String url = urlBuilder.build().toString();
+
+                Request request = new Request.Builder()
+                        .url(url)
+                        .build();
+
+                System.out.println("+++++++++++++++++++++++++++++++++++");
+                System.out.println(url);
+
+                Response response = client.newCall(request).execute();
+                System.out.println(response.body().toString());
+
+            } catch (IOException | NullPointerException e){
+                e.printStackTrace();
             }
         });
     }
-
 }
