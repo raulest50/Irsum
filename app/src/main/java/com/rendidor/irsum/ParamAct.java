@@ -88,13 +88,6 @@ public class ParamAct extends AppCompatActivity {
             }
         });
 
-        Button ts = findViewById(R.id.B_test_nj);
-        ts.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                test();
-            }
-        });
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -311,64 +304,4 @@ public class ParamAct extends AppCompatActivity {
         }
     }
 
-    public void test(){
-
-        Executors.newSingleThreadExecutor().execute(() -> {
-            try {
-                OkHttpClient client = new OkHttpClient();
-                HttpUrl.Builder urlBuilder = HttpUrl.parse("http://${server_ip}:3000/buscar_producto").newBuilder();
-                urlBuilder.addQueryParameter("tipo_busqueda", "2");
-                urlBuilder.addQueryParameter("busqueda", "036");
-                String url = urlBuilder.build().toString();
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        .build();
-
-                String r;
-                Call call = client.newCall(request);
-
-                try(Response res = call.execute()){
-                    r = res.body().string();
-                    System.out.println("+++++++++++++++++++++++++++++++++++");
-                    System.out.println("+++++++++++++++++++++++++++++++++++");
-                    System.out.println(r);
-                }
-
-                ArrayList<Producto> lp = new ArrayList();
-
-                Object obj = JSONValue.parse(r);
-                JSONArray json_array = (JSONArray) obj;
-
-                for( Object x : json_array){
-                    JSONObject y = (JSONObject) x;
-
-                    //int costo = ((Number) y.get("costo")).intValue(); casting directo a int, Integer etc no funciona
-                    // tomado de https://coderanch.com/t/675211/java/JSON-java-lang-Integer-cast
-
-                    String _id = y.get("_id").toString();
-                    String descripcion = y.get("descripcion").toString();
-                    String costo = y.get("costo").toString();
-                    String pv_mayor = y.get("pv_mayor").toString();
-                    String pv_publico = y.get("pv_publico").toString();
-                    String iva = y.get("iva").toString();
-                    String last_updt = y.get("last_updt").toString();
-                    String keywords = y.get("keywords").toString();
-
-                    lp.add(new Producto(_id, descripcion, costo, pv_mayor, pv_publico, iva, last_updt, keywords));
-                }
-
-                System.out.println("################################");
-                System.out.println("################################");
-                System.out.println("################################");
-                System.out.println("################################");
-                System.out.println(lp.get(0).getDescripcion());
-                System.out.println(lp.get(1).getDescripcion());
-                System.out.println(lp.get(2).getDescripcion());
-
-            } catch (IOException | NullPointerException e){
-                e.printStackTrace();
-            }
-        });
-    }
 }

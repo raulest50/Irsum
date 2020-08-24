@@ -14,8 +14,8 @@ public class Producto implements Parcelable {
         }
     };
     public String _id;
-    public String Descripcion;
-    public String Costo;
+    public String descripcion;
+    public String costo;
     public String pv_mayor;
     public String pv_publico;
     public String iva;
@@ -24,8 +24,8 @@ public class Producto implements Parcelable {
 
     public Producto(String _id, String descripcion, String costo, String pv_mayor, String pv_publico, String iva, String lastUp, String keywords) {
         this._id = _id;
-        this.Descripcion = descripcion;
-        this.Costo = costo;
+        this.descripcion = descripcion;
+        this.costo = costo;
         this.pv_mayor = pv_mayor;
         this.pv_publico = pv_publico;
         this.last_updt = lastUp;
@@ -34,8 +34,8 @@ public class Producto implements Parcelable {
     }
 
     protected Producto(Parcel in) {
-        this.Descripcion = in.readString();
-        this.Costo = in.readString();
+        this.descripcion = in.readString();
+        this.costo = in.readString();
         this.pv_mayor = in.readString();
         this.pv_publico = in.readString();
         this.last_updt = in.readString();
@@ -44,11 +44,11 @@ public class Producto implements Parcelable {
     }
 
     public String getDescripcion() {
-        return this.Descripcion;
+        return this.descripcion;
     }
 
     public String getCosto() {
-        return this.Costo;
+        return this.costo;
     }
 
     public String getPv_mayor() {
@@ -72,11 +72,11 @@ public class Producto implements Parcelable {
     }
 
     public void setDescripcion(String descripcion) {
-        this.Descripcion = descripcion;
+        this.descripcion = descripcion;
     }
 
     public void setCosto(String costo) {
-        this.Costo = costo;
+        this.costo = costo;
     }
 
     public void setPv_mayor(String pv_mayor) {
@@ -104,8 +104,8 @@ public class Producto implements Parcelable {
     }
 
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.Descripcion);
-        dest.writeString(this.Costo);
+        dest.writeString(this.descripcion);
+        dest.writeString(this.costo);
         dest.writeString(this.pv_mayor);
         dest.writeString(this.pv_publico);
         dest.writeString(this.last_updt);

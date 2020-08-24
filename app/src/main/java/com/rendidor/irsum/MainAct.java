@@ -19,17 +19,22 @@ import android.widget.Toast;
 
 
 import com.rendidor.irsum.Adaptadores.RVVentasAdaptador;
+import com.rendidor.irsum.Definiciones.Producto;
 import com.rendidor.irsum.Definiciones.Venta;
-import com.rendidor.irsum.Hilos.MainActThreads;
+
+import com.rendidor.irsum.remote.HttpIrsumReqs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 
 import android.support.v7.app.AlertDialog.Builder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.LayoutManager;
+
+import static java.lang.Thread.sleep;
 
 public class MainAct extends SuperAct {
     private static final int REQUEST_CODE = 1234;
@@ -43,12 +48,12 @@ public class MainAct extends SuperAct {
     final Context context = this;
     public EditText etx; // campo de texto para ingresar codigo de barras con ayuda del lector
     public List<Venta> listaVenta; // lista de productos registrados en la venta.
-    MainActThreads mat;
+
 
     /* renamed from: rv */
     public RecyclerView rv;
     public RVVentasAdaptador rvpa;
-    public int tipoBusqueda = 0;
+
 
     /* access modifiers changed from: protected */
     public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +71,7 @@ public class MainAct extends SuperAct {
         this.LCobro = findViewById(R.id.LCobro);
         this.listaVenta = new ArrayList();
         start_set_cursor_thread(this);
-        this.mat = new MainActThreads(this, this.Host);
+
         set_etx_listener();
         this.botonRegistrar.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -106,7 +111,7 @@ public class MainAct extends SuperAct {
                 break;
             case R.id.imprimir /*2131493005*/:
                 if (!this.listaVenta.isEmpty()) {
-                    this.mat.ImprimirVenta(this.listaVenta);
+                    // IMPLEMENTAR LA IMPRESION DE FACTURA
                     break;
                 }
                 break;
@@ -147,46 +152,37 @@ public class MainAct extends SuperAct {
         }
     }
 
+    /**
+     * se crean 2 hilos, el primero se encarga de inhabilitar y habilitar listeners y carateristicas
+     * de la UI con el objetivo que su funcionanmiento no se entorpesca por el modo de operacion
+     * del lector de codigo de barras, que en pruebas se observo que aveces envia el comando de
+     * enter mas de una vez (redundancia) entre otras cosas (para eso es el delay de 100ms).
+     * este hilo inicia otro, startProductoRequestThread que es quien realmente hace el http request
+     * a satelink para obtener el producto y mostrarlo en la lista de ventas.
+     * @param busqueda
+     */
     public void BuscarP(final String busqueda) {
         disable_etx_listener();
-        new Thread() {
-            public void run() {
-                try {
-                    sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                String tipo = "";
-                switch (MainAct.this.tipoBusqueda) {
-                    case 0:
-                        tipo = "3";
-                        break;
-                    case 1:
-                        tipo = "2";
-                        break;
-                    case 2:
-                        tipo = "1";
-                        break;
-                }
-                MainAct.this.mat.RegistrarProducto(busqueda, tipo, MainAct.this.listaVenta);
-                if (MainAct.this.tipoBusqueda == 0) {
-                    MainAct.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            MainAct.this.etx.requestFocus();
-                            MainAct.this.etx.setText("");
-                        }
-                    });
-                } else {
-                    MainAct.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            MainAct.this.etx.requestFocus();
-                            MainAct.this.close_softkey();
-                        }
-                    });
-                }
-                MainAct.this.set_etx_listener();
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }.start();
+
+            HttpIrsumReqs htir = new HttpIrsumReqs(MainAct.this);
+            htir.startProductoRequestThread("0", busqueda, listaVenta);
+
+            //MainAct.this.mat.RegistrarProducto(busqueda, tipo, MainAct.this.listaVenta);
+
+            MainAct.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    MainAct.this.etx.requestFocus();
+                    MainAct.this.etx.setText("");
+                }
+            });
+            MainAct.this.set_etx_listener();
+        });
     }
 
     /**
@@ -202,9 +198,7 @@ public class MainAct extends SuperAct {
                     // de lo contratio ocurrira una excenpcion.
                     MainAct.this.runOnUiThread(new Runnable() {
                         public void run() {
-                            if (MainAct.this.tipoBusqueda == 0) {
-                                MainAct.this.etx.requestFocus();
-                            }
+                            MainAct.this.etx.requestFocus();
                         }
                     });
                     try {

@@ -60,13 +60,5 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/B_test_nj"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20sp"
-            android:text="TEST"
-            android:textSize="30sp" />
-
     </LinearLayout>
 </RelativeLayout>
