@@ -15,6 +15,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.rendidor.irsum.Definiciones.Producto;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -23,9 +29,11 @@ import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.concurrent.Executors;
 
+import okhttp3.Call;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -304,24 +312,59 @@ public class ParamAct extends AppCompatActivity {
     }
 
     public void test(){
-        //String url = "http://${server_ip}/buscar_producto";
+
         Executors.newSingleThreadExecutor().execute(() -> {
             try {
                 OkHttpClient client = new OkHttpClient();
                 HttpUrl.Builder urlBuilder = HttpUrl.parse("http://${server_ip}:3000/buscar_producto").newBuilder();
-                urlBuilder.addQueryParameter("codigo", "1234");
-                //urlBuilder.addQueryParameter("user", "vogella");
+                urlBuilder.addQueryParameter("tipo_busqueda", "2");
+                urlBuilder.addQueryParameter("busqueda", "036");
                 String url = urlBuilder.build().toString();
 
                 Request request = new Request.Builder()
                         .url(url)
                         .build();
 
-                System.out.println("+++++++++++++++++++++++++++++++++++");
-                System.out.println(url);
+                String r;
+                Call call = client.newCall(request);
 
-                Response response = client.newCall(request).execute();
-                System.out.println(response.body().toString());
+                try(Response res = call.execute()){
+                    r = res.body().string();
+                    System.out.println("+++++++++++++++++++++++++++++++++++");
+                    System.out.println("+++++++++++++++++++++++++++++++++++");
+                    System.out.println(r);
+                }
+
+                ArrayList<Producto> lp = new ArrayList();
+
+                Object obj = JSONValue.parse(r);
+                JSONArray json_array = (JSONArray) obj;
+
+                for( Object x : json_array){
+                    JSONObject y = (JSONObject) x;
+
+                    //int costo = ((Number) y.get("costo")).intValue(); casting directo a int, Integer etc no funciona
+                    // tomado de https://coderanch.com/t/675211/java/JSON-java-lang-Integer-cast
+
+                    String _id = y.get("_id").toString();
+                    String descripcion = y.get("descripcion").toString();
+                    String costo = y.get("costo").toString();
+                    String pv_mayor = y.get("pv_mayor").toString();
+                    String pv_publico = y.get("pv_publico").toString();
+                    String iva = y.get("iva").toString();
+                    String last_updt = y.get("last_updt").toString();
+                    String keywords = y.get("keywords").toString();
+
+                    lp.add(new Producto(_id, descripcion, costo, pv_mayor, pv_publico, iva, last_updt, keywords));
+                }
+
+                System.out.println("################################");
+                System.out.println("################################");
+                System.out.println("################################");
+                System.out.println("################################");
+                System.out.println(lp.get(0).getDescripcion());
+                System.out.println(lp.get(1).getDescripcion());
+                System.out.println(lp.get(2).getDescripcion());
 
             } catch (IOException | NullPointerException e){
                 e.printStackTrace();

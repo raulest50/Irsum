@@ -5,7 +5,6 @@ import com.rendidor.irsum.Definiciones.Producto;
 import com.rendidor.irsum.Definiciones.Venta;
 import com.rendidor.irsum.MainAct;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -54,7 +53,7 @@ public class MainActThreads {
     }
 
     public Venta Pro2Ven(Producto p) {
-        return new Venta(p.getDescripcion(), Integer.parseInt(p.getPvpublico()));
+        return new Venta(p.getDescripcion(), Integer.parseInt(p.getPv_publico()));
     }
 
     public void ShowToast(final String text) {

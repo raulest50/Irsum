@@ -53,18 +53,17 @@ dependencies {
     compileOnly 'com.antkorwin:better-strings:0.4'
     annotationProcessor 'com.antkorwin:better-strings:0.4'
 
-    // lib for http request with callbacks
-    // https://github.com/android-async-http/android-async-http
-    implementation 'com.loopj.android:android-async-http:1.4.11'
-
-
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.2'
+    // json parsing lib. Gson works better with small files and microservices
+    // jackson better for big files
+    // json-simple is better when working with both big and small files
+    implementation 'com.googlecode.json-simple:json-simple:1.1'
 
     // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    // solo se puede usar esta vercion para api 22 o mayor
     //implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.8.1'
 
     // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    // para hacer los http request a satelink. toca usar est vercion para poder usar api 19
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.12'
 
 }

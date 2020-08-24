@@ -2,7 +2,6 @@ package com.rendidor.irsum.Definiciones;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.Parcelable.Creator;
 
 public class Producto implements Parcelable {
     public static final Creator<Producto> CREATOR = new Creator<Producto>() {
@@ -14,35 +13,34 @@ public class Producto implements Parcelable {
             return new Producto[size];
         }
     };
-    public String Codigo;
-    public String Costo;
+    public String _id;
     public String Descripcion;
-    public String Familia;
-    public String Iva;
-    public String LastUp;
-    public String Pvpublico;
-    public String Pvtienda;
+    public String Costo;
+    public String pv_mayor;
+    public String pv_publico;
+    public String iva;
+    public String last_updt;
+    public String keywords;
 
-    public Producto(String codigo, String costo, String descripcion, String familia, String iva, String lastUp, String pvpublico, String pvtienda) {
+    public Producto(String _id, String descripcion, String costo, String pv_mayor, String pv_publico, String iva, String lastUp, String keywords) {
+        this._id = _id;
         this.Descripcion = descripcion;
         this.Costo = costo;
-        this.Pvtienda = pvtienda;
-        this.Pvpublico = pvpublico;
-        this.LastUp = lastUp;
-        this.Codigo = codigo;
-        this.Iva = iva;
-        this.Familia = familia;
+        this.pv_mayor = pv_mayor;
+        this.pv_publico = pv_publico;
+        this.last_updt = lastUp;
+        this.iva = iva;
+        this.keywords =  keywords;
     }
 
     protected Producto(Parcel in) {
         this.Descripcion = in.readString();
         this.Costo = in.readString();
-        this.Pvtienda = in.readString();
-        this.Pvpublico = in.readString();
-        this.LastUp = in.readString();
-        this.Codigo = in.readString();
-        this.Iva = in.readString();
-        this.Familia = in.readString();
+        this.pv_mayor = in.readString();
+        this.pv_publico = in.readString();
+        this.last_updt = in.readString();
+        this._id = in.readString();
+        this.iva = in.readString();
     }
 
     public String getDescripcion() {
@@ -53,28 +51,24 @@ public class Producto implements Parcelable {
         return this.Costo;
     }
 
-    public String getPvtienda() {
-        return this.Pvtienda;
+    public String getPv_mayor() {
+        return this.pv_mayor;
     }
 
-    public String getPvpublico() {
-        return this.Pvpublico;
+    public String getPv_publico() {
+        return this.pv_publico;
     }
 
-    public String getLastUp() {
-        return this.LastUp;
+    public String getLast_updt() {
+        return this.last_updt;
     }
 
     public String getCodigo() {
-        return this.Codigo;
+        return this._id;
     }
 
     public String getIva() {
-        return this.Iva;
-    }
-
-    public String getFamilia() {
-        return this.Familia;
+        return this.iva;
     }
 
     public void setDescripcion(String descripcion) {
@@ -85,28 +79,24 @@ public class Producto implements Parcelable {
         this.Costo = costo;
     }
 
-    public void setPvtienda(String pvtienda) {
-        this.Pvtienda = pvtienda;
+    public void setPv_mayor(String pv_mayor) {
+        this.pv_mayor = pv_mayor;
     }
 
-    public void setPvpublico(String pvpublico) {
-        this.Pvpublico = pvpublico;
+    public void setPv_publico(String pv_publico) {
+        this.pv_publico = pv_publico;
     }
 
-    public void setLastUp(String lastUp) {
-        this.LastUp = lastUp;
+    public void setLast_updt(String last_updt) {
+        this.last_updt = last_updt;
     }
 
-    public void setCodigo(String codigo) {
-        this.Codigo = codigo;
+    public void setCodigo(String _id) {
+        this._id = _id;
     }
 
     public void setIva(String iva) {
-        this.Iva = iva;
-    }
-
-    public void setFamilia(String familia) {
-        this.Familia = familia;
+        this.iva = iva;
     }
 
     public int describeContents() {
@@ -116,11 +106,10 @@ public class Producto implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.Descripcion);
         dest.writeString(this.Costo);
-        dest.writeString(this.Pvtienda);
-        dest.writeString(this.Pvpublico);
-        dest.writeString(this.LastUp);
-        dest.writeString(this.Codigo);
-        dest.writeString(this.Iva);
-        dest.writeString(this.Familia);
+        dest.writeString(this.pv_mayor);
+        dest.writeString(this.pv_publico);
+        dest.writeString(this.last_updt);
+        dest.writeString(this._id);
+        dest.writeString(this.iva);
     }
 }
