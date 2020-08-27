@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.rendidor.irsum"
-        minSdkVersion 19
+        minSdkVersion 17
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -65,5 +65,12 @@ dependencies {
     // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
     // para hacer los http request a satelink. toca usar est vercion para poder usar api 19
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.12'
+
+    /**
+     * https://github.com/TakahikoKawasaki/nv-websocket-client
+     * se escogio porque es simple y fue hecha con compatibilidad android en mente.
+     * funciona con SE java 1.5 o superior.
+     */
+    implementation 'com.neovisionaries:nv-websocket-client:2.10'
 
 }

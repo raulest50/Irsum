@@ -60,5 +60,31 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/TXV_NombreID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10sp"
+            android:layout_marginTop="30sp"
+            android:layout_marginRight="10sp"
+            android:text="nombre:"
+            android:textSize="30sp" />
+
+        <EditText
+            android:id="@+id/EditText_nombreID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/Button_guardarParam"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            android:text="Guardar Nombre"
+            android:textSize="30sp" />
+
     </LinearLayout>
 </RelativeLayout>

@@ -12,14 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.rendidor.irsum.Definiciones.Producto;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -29,38 +24,39 @@ import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.concurrent.Executors;
-
-import okhttp3.Call;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 
 // explicacion de completable future
 // https://levelup.gitconnected.com/completablefuture-a-new-era-of-asynchronous-programming-86c2fe23e246
 
 public class ParamAct extends AppCompatActivity {
-    Editor edit;
-    Button Button_Buscar_Satelink;
-    SharedPreferences pre;
 
+    Button Button_Buscar_Satelink;
     Button Button_volver;
     TextView TXView_show_serverIP; // etiqueta para mostrar la direccion ip del servidor.
 
+    /**
+     * se pone el nombre que se le desea dar a la tablet. se usara en la comunicacion con websockets
+     * para identificar este dispositivo android. La identificacion sera "nombre+mac".
+     * se agrega la mac para asegurar que las identificaciones son unicas sin importar el nombre
+     * asignado por el usuario.
+     */
+    EditText EditText_nombreID;
+    Button Button_guardarParam;
+
     public String server_ip;
 
-    public final String BLANK_IP_LABEL = "--- . --- . --- . ---";
-
     public SatelinkFinder sf = new SatelinkFinder(this); // se usa para encontrar la direccion ip del server con udp broadcast
+
+    public PreferenciasIrsum pref;
 
     /* access modifiers changed from: protected */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_param);
+
+        pref = new PreferenciasIrsum(this);
 
         // Instacias elementos UI
         this.Button_volver = findViewById(R.id.Button_volver);
@@ -69,11 +65,13 @@ public class ParamAct extends AppCompatActivity {
         this.TXView_show_serverIP = findViewById(R.id.TXView_show_serverIP);
 
         // java preference api
-        this.pre = getSharedPreferences("configuracion_irsum", 0);
-        this.edit = this.pre.edit();
-        this.server_ip = this.pre.getString("host", BLANK_IP_LABEL);
+
+        this.server_ip = pref.getHost();
         this.TXView_show_serverIP.setText(server_ip);
         //this.EditText_Host.setText(this.pre.getString("host", ""));
+
+        this.EditText_nombreID = findViewById(R.id.EditText_nombreID);
+        this.Button_guardarParam = findViewById(R.id.Button_guardarParam);
 
         // Button Listeners
         this.Button_Buscar_Satelink.setOnClickListener(new OnClickListener() {
@@ -85,6 +83,13 @@ public class ParamAct extends AppCompatActivity {
         this.Button_volver.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 ParamAct.this.startActivity(new Intent(ParamAct.this, MainAct.class));
+            }
+        });
+
+        this.Button_guardarParam.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) { // se guarda el nombre asigndo a la tablet en preferencias
+                pref.setNombreId(EditText_nombreID.getText().toString());
             }
         });
 
@@ -199,7 +204,7 @@ public class ParamAct extends AppCompatActivity {
 
                     @Override
                     public void interrupt() {
-                        DoWhenComplete(BLANK_IP_LABEL);
+                        DoWhenComplete(PreferenciasIrsum.BLANK_IP_LABEL);
                         //Toast toast2 = Toast.makeText(contexto, "No se encontro el servidor", Toast.LENGTH_SHORT);
                         //toast2.show();
                         super.interrupt();
@@ -281,8 +286,7 @@ public class ParamAct extends AppCompatActivity {
          * @param ip
          */
         public void DoWhenComplete(final String ip){
-            edit.putString("host", ip);// se guarda la ip del servidor en preferencias.
-            edit.apply();
+            pref.setHost(ip);
             setTXView_show_serverIP(ip);
             reset();
         }

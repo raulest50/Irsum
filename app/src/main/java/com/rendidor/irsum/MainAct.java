@@ -1,9 +1,11 @@
 package com.rendidor.irsum;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +24,7 @@ import com.rendidor.irsum.Adaptadores.RVVentasAdaptador;
 import com.rendidor.irsum.Definiciones.Producto;
 import com.rendidor.irsum.Definiciones.Venta;
 
+import com.rendidor.irsum.remote.ClienteWS;
 import com.rendidor.irsum.remote.HttpIrsumReqs;
 
 import java.util.ArrayList;
@@ -36,7 +39,7 @@ import android.support.v7.widget.RecyclerView.LayoutManager;
 
 import static java.lang.Thread.sleep;
 
-public class MainAct extends SuperAct {
+public class MainAct extends AppCompatActivity {
     private static final int REQUEST_CODE = 1234;
     public String Host; // direccion ip del servidor nodejs
     public TextView LCobro;
@@ -53,6 +56,8 @@ public class MainAct extends SuperAct {
     /* renamed from: rv */
     public RecyclerView rv;
     public RVVentasAdaptador rvpa;
+
+    public ClienteWS cws;
 
 
     /* access modifiers changed from: protected */
@@ -93,6 +98,10 @@ public class MainAct extends SuperAct {
                 MainAct.this.DialogAddNoCod();
             }
         });
+
+        cws = new ClienteWS(this);
+        cws.Conectar();
+
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -196,11 +205,7 @@ public class MainAct extends SuperAct {
                 while (true) {
                     // siempre que un hilo interactue con la UI debe usar el metodo runOnUiThread
                     // de lo contratio ocurrira una excenpcion.
-                    MainAct.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            MainAct.this.etx.requestFocus();
-                        }
-                    });
+                    MainAct.this.runOnUiThread(() -> MainAct.this.etx.requestFocus());
                     try {
                         sleep(1000);
                     } catch (InterruptedException e) {
@@ -389,6 +394,7 @@ public class MainAct extends SuperAct {
 
     public void SetListenerToCustomNumKey(Button theB, final String n, final EditText TheEtx) {
         theB.setOnClickListener(new OnClickListener() {
+            @SuppressLint("SetTextI18n")
             public void onClick(View v) {
                 if (n.equals("b")) {
                     String actual = TheEtx.getText().toString();
