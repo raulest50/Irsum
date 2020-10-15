@@ -1,40 +1,38 @@
 package com.rendidor.irsum.Adaptadores;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog.Builder;
-import android.support.v7.widget.RecyclerView.Adapter;
-import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.view.LayoutInflater;
+
+import androidx.recyclerview.widget.RecyclerView.Adapter;
+
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
-import com.rendidor.irsum.Definiciones.Venta;
 
 import java.util.List;
 
-import com.rendidor.irsum.Definiciones.Venta;
+import com.rendidor.irsum.Definiciones.ItemVenta;
 import com.rendidor.irsum.MainAct;
-import com.rendidor.irsum.R;
 
-public class RVVentasAdaptador extends Adapter<RVVentasAdaptador.VentaViewHolder> {
+//<RVVentasAdaptador.VentaViewHolder>
+public abstract class RVVentasAdaptador extends Adapter {
+
+    /*
     public Context context;
-    public List<Venta> listaVentas;
+    public List<ItemVenta> listaVentas;
     public MainAct mact;
+
 
     public class VentaViewHolder extends ViewHolder {
         Button BRetirar;
         TextView Descripcion;
         Button Num;
 
-        /* renamed from: Pr */
+
         TextView f17Pr;
         TextView PvPublico;
         Button UPN;
+
 
         public VentaViewHolder(View itemView) {
             super(itemView);
@@ -125,24 +123,30 @@ public class RVVentasAdaptador extends Adapter<RVVentasAdaptador.VentaViewHolder
                 }
             });
         }
+
     }
 
-    public RVVentasAdaptador(List<Venta> listaProductos, MainAct mact2, Context context2) {
-        this.listaVentas = listaProductos;
+    // List<Venta> listaProductos
+    public RVVentasAdaptador( MainAct mact2, Context context2) {
+        //this.listaVentas = listaProductos;
         this.mact = mact2;
         this.context = context2;
     }
 
+
     public VentaViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         return new VentaViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.venta_lay, viewGroup, false));
     }
+    */
 
+    /*
     public void onBindViewHolder(VentaViewHolder pvh, int i) {
         pvh.Descripcion.setText(((Venta) this.listaVentas.get(i)).getNombreProducto());
         pvh.PvPublico.setText(Integer.toString(((Venta) this.listaVentas.get(i)).getPvPublico()));
         pvh.Num.setText(Integer.toString(((Venta) this.listaVentas.get(i)).getCant()));
         pvh.f17Pr.setText(Integer.toString(((Venta) this.listaVentas.get(i)).getPvPublico() * ((Venta) this.listaVentas.get(i)).getCant()));
     }
+
 
     public int getItemCount() {
         return this.listaVentas.size();
@@ -151,14 +155,14 @@ public class RVVentasAdaptador extends Adapter<RVVentasAdaptador.VentaViewHolder
     public void cancelar() {
         this.listaVentas.clear();
         notifyAll();
-        this.mact.listaVenta = this.listaVentas;
+        //this.mact.listaVenta = this.listaVentas;
         triggerSuma();
     }
 
     public void triggerSuma() {
         this.mact.runOnUiThread(new Runnable() {
             public void run() {
-                RVVentasAdaptador.this.mact.CalcularSuma();
+                //RVVentasAdaptador.this.mact.CalcularSuma();
             }
         });
     }
@@ -181,4 +185,6 @@ public class RVVentasAdaptador extends Adapter<RVVentasAdaptador.VentaViewHolder
             }
         });
     }
+    */
+
 }

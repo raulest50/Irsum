@@ -1,12 +1,9 @@
 package com.rendidor.irsum.remote;
 
 import android.content.SharedPreferences;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 
 import com.rendidor.irsum.Definiciones.Producto;
-import com.rendidor.irsum.Definiciones.Venta;
 import com.rendidor.irsum.MainAct;
 
 import org.json.simple.JSONArray;
@@ -42,18 +39,18 @@ public class HttpIrsumReqs {
         // se obtiene la ip de satelink guardada previamente con java preference api
         SharedPreferences pre = main_act.getSharedPreferences("configuracion_irsum", 0);
         Editor edit = pre.edit();
-        String satelink_ip = pre.getString("host", "");
+        String satelink_ip = "192.168.77.101";//pre.getString("host", "");
         this.satelink_product_req_url = "http://${satelink_ip}:3000/buscar_producto";
     }
 
-
+    /*
     public void startProductoRequestThread(String tp, String b, List<Venta> lv){
         Executors.newSingleThreadExecutor().execute(() -> {
             ArrayList<Producto> lpr = ProductoHttpRequest(tp, b);
             if(lpr.isEmpty()){
                 main_act.runOnUiThread(new Runnable() {
                     public void run() {
-                        main_act.ShowWarningNocod();
+                        //main_act.ShowWarningNocod();
                     }
                 });
             } else{
@@ -67,6 +64,7 @@ public class HttpIrsumReqs {
             }
         });
     }
+    */
 
     /**
      * implementa el http request para buscar prductos. generacion de hilo nuevo
@@ -111,7 +109,7 @@ public class HttpIrsumReqs {
                 String last_updt = y.get("last_updt").toString();
                 String keywords = y.get("keywords").toString();
 
-                lpr.add(new Producto(_id, descripcion, costo, pv_mayor, pv_publico, iva, last_updt, keywords));
+                //lpr.add(new Producto(_id, descripcion, costo, pv_mayor, pv_publico, iva, last_updt, keywords));
             }
         } catch (IOException e){
             e.printStackTrace();

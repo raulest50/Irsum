@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="prefcat_satelink">Enlace con Satelink</string>
+
+<!-- switch preference auto server ip   -->
+    <string name="sw_autoip_title">Deteccion automatica de Satelink</string>
+    <string name="sw_autoip_summaryOff">Se usara la ip establecida en el campo de texto</string>
+    <string name="sw_autoip_summaryOn">La ip del campo de texto no sera usada, en su lugar,
+    la app intentara detectar la direccion ip del servidor al iniciar la app y cada que
+    que ocurra un http timeout</string>
+
+    <string name="et_serverip_title">Ip servidor satelink</string>
+    <string name="et_serverip_summary">Ingresar manualmente la ip de satelink</string>
+
+
+    <string name="prefcat_iden_title">Identificacion De la Tablet</string>
+
+    <string name="et_nodename_title">Nombre del dispositivo</string>
+    <string name="et_nodename_summary">Es el nombre que se mostrara en el mapa de red de Orondo</string>
+</resources>

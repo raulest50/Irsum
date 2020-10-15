@@ -4,97 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+
+    <fragment
+        android:id="@+id/navHost_main_act"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical">
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/main_nav" />
 
-        <EditText
-            android:id="@+id/campo_buscar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text" />
-
-        <LinearLayout
-            android:id="@+id/LinLayCtrl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/bRegistrar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.8"
-                    android:text="@string/bRegistrar" />
-
-                <Button
-                    android:id="@+id/bCancelar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.2"
-                    android:text="@string/bCancelar" />
-
-                <Button
-                    android:id="@+id/buttonManual"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
-                    android:text="Manual" />
-
-                <Button
-                    android:id="@+id/buttonNoCod"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.2"
-                    android:text="NoCod" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txvresultados"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/txlventas"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="43dp" />
-
-            <TextView
-                android:id="@+id/LCobro"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#327c18"
-                android:textSize="43dp" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#327c18"
-                android:textIsSelectable="false"
-                android:textSize="43dp" />
-        </LinearLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/ListaProductos"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
-    </LinearLayout>
 </RelativeLayout>

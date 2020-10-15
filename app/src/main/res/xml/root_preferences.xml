@@ -1,0 +1,36 @@
+
+
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <PreferenceCategory app:title="@string/prefcat_satelink">
+
+        <SwitchPreference
+            app:key="stkey_settings_autoip"
+            app:title="@string/sw_autoip_title"
+            app:summaryOff="@string/sw_autoip_summaryOff"
+            app:summaryOn="@string/sw_autoip_summaryOn"
+            app:defaultValue="true"
+            />
+
+        <EditTextPreference
+            app:key="stkey_settings_serverip_txf"
+            app:title="@string/et_serverip_title"
+            app:useSimpleSummaryProvider="true"
+            app:summary="@string/et_serverip_summary">
+            >
+        </EditTextPreference>
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/prefcat_iden_title">
+        <EditTextPreference
+            app:key="et_serverip_summary"
+            app:title="@string/et_nodename_title"
+            app:useSimpleSummaryProvider="true"
+            app:summary="@string/et_nodename_summary"
+            />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

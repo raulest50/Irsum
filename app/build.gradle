@@ -1,17 +1,33 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
 
 android {
     compileSdkVersion 28
     buildToolsVersion "30.0.0"
 
+    /* para gradle 3.6
+    viewBinding {
+        enabled = true
+    }
+    */
+
+    // para gradle 4.0+
+    buildFeatures{
+        viewBinding = true
+        dataBinding true
+    }
+
     defaultConfig {
         applicationId "com.rendidor.irsum"
         minSdkVersion 17
-        targetSdkVersion 26
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true // para poder usa vectorDrwabale en image button
+
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     buildTypes {
@@ -42,12 +58,15 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
     // String interpolation like kotlin
     compileOnly 'com.antkorwin:better-strings:0.4'
@@ -72,5 +91,22 @@ dependencies {
      * funciona con SE java 1.5 o superior.
      */
     implementation 'com.neovisionaries:nv-websocket-client:2.10'
+
+
+    /**
+     * lib for logging to file. adb no esta funcionando con las tablets pequeñas.
+     * por ahora es la unica herramienta de debug en esos casos.
+     */
+    implementation 'com.github.bosphere.android-filelogger:filelogger:1.0.7'
+
+
+    //https://github.com/balysv/material-ripple
+    //ripple fue agregado ejn api 21. con balysv se puede usar hasta api 14.
+    implementation 'com.balysv:material-ripple:1.0.2'
+
+    //Navigation components
+    def nav_version = "2.3.0"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
 }
