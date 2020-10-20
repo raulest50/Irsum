@@ -1,11 +1,9 @@
 package com.rendidor.irsum.remote;
 
 
-import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.format.Formatter;
-import android.widget.Toast;
 
 import com.bosphere.filelogger.FL;
 
@@ -20,8 +18,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import static android.content.Context.WIFI_SERVICE;
-
 /**
  * implementa la logica con datagramas para encontrar el servidor Satelink
  * y ademas provee de la interfaz para
@@ -32,7 +28,8 @@ public abstract class SatelinkFinder {
     private boolean running; // para indicar si el hilo esta o no corriendo
     private byte[] buf = new byte[128];
 
-    public Context context;
+    //public Context context;
+    public WifiManager wifiMgr;
 
     /**
      * para definir en que fase de la comunicacion se encuentra, como una maquina de estados
@@ -50,15 +47,17 @@ public abstract class SatelinkFinder {
     private final int UDP_PORT_SENDTO = 2100;
 
 
-    public SatelinkFinder(int TIME_OUT_MILLIS, Context context) {
+    public SatelinkFinder(int TIME_OUT_MILLIS, WifiManager wifiMgr) {
         try {
             this.socket = new DatagramSocket(UDP_PORT_BIND);
             this.socket.setBroadcast(true);
             this.running = false;
             this.estado = 0;
             this.TIME_OUT_MILLIS = TIME_OUT_MILLIS;
-            this.context = context;
+            //this.context = context;
+            this.wifiMgr = wifiMgr;
         } catch (SocketException e) {
+            socket.close();
             FL.e("SatelinkFinder Constructor", e);
             this.onError(e);
         }
@@ -76,8 +75,9 @@ public abstract class SatelinkFinder {
                 sleep(TIME_OUT_MILLIS);
                 udp_thread.interrupt();
             } catch (InterruptedException e) {
-                //e.printStackTrace();
-                FL.d("SFTImer interrumpido");
+                // si se logra encontrar la ip de satelink lo normal es que el hilo de busqueda
+                // pare este hilo de temporizador, seria el funcionamiento normal del algoritmo
+                // y por tanto no se deberia hacer nada
             }
         }
     }
@@ -95,29 +95,39 @@ public abstract class SatelinkFinder {
     public void Scan(){
         if(!running) { // prevent more than one thread.
             FL.d("Scan()");
-            Toast toast = Toast.makeText(context, "Buscando servidor...", Toast.LENGTH_SHORT);
-            toast.show();
+            //Toast.makeText(context, "Buscando servidor...", Toast.LENGTH_SHORT).show();
             Thread udp_thread = new Thread(){
                 @Override
                 public void run() {
-                    SFTimer tmout = new SFTimer();
-                    tmout.udp_thread = this;
-                    tmout.start();
-                    ArrayList ans = SendListenUDP_broadcast();
-                    tmout.interrupt();
-                    if((boolean) ans.get(0)) onSatelinkFound((String) ans.get(1));
-                    else onNotFound();
-                    reset();
+                    try {
+                        SFTimer tmout = new SFTimer();
+                        tmout.udp_thread = this;
+                        tmout.start();
+                        ArrayList ans = SendListenUDP_broadcast();//solo retorna si recibe respuesta udp
+                        tmout.interrupt(); // se detiene el hilo de temporizador
+                        if ((boolean) ans.get(0)) onSatelinkFound((String) ans.get(1));
+                        else onNotFound();
+                    } catch(NullPointerException e){
+                        socket.close();
+                        onError(e);
+                    }
                 }
 
+                /**
+                 * si este que es el hilo de busqueda es interrupido, quiere decir que la ip
+                 * de satelink no se pudo encontrar dentro del timeout especificado en el constructor.
+                 * Este no seria el caso normal de funcionamiento y se debe llamar la funcion onTimeOut()
+                 * la cual debe ser @override por el usuario de la clase
+                 */
                 @Override
                 public void interrupt() {
                     super.interrupt();
-                    onNotFound();
+                    socket.close();
+                    onTimeOut();
                 }
             };
             udp_thread.start();
-        } else{ // en caso de que el hilo ua este corriendo
+        } else{ // en caso de que el hilo udp este corriendo
             // aun no he decidido que hacer
         }
     }
@@ -162,10 +172,10 @@ public abstract class SatelinkFinder {
                 }
             }
         } catch (IOException | NullPointerException e) {
-            reset();
             onError(e);
             FL.e("Exception en UDP broadcast", e);
         }
+        socket.close();// ocurran o no una excepcion se cierra el socket.
         return r;
     }
 
@@ -202,8 +212,8 @@ public abstract class SatelinkFinder {
     public InetAddress GetBroadcastWifi() throws UnknownHostException {
         InetAddress broadcast;
         try {
-            WifiManager wifiMgr = (WifiManager) context.getSystemService(WIFI_SERVICE);
-            WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+            //WifiManager wifiMgr = (WifiManager) context.getSystemService(WIFI_SERVICE);
+            WifiInfo wifiInfo = this.wifiMgr.getConnectionInfo();
             int ip = wifiInfo.getIpAddress();
             String ipAddress = Formatter.formatIpAddress(ip);
 
@@ -216,30 +226,33 @@ public abstract class SatelinkFinder {
         return broadcast;
     }
 
-    /**
-     * reestablece algunos de los atributos de esta clase para que el hilo
-     * para descubrir el servidor pueda ser lanzado de nuevo.
-     */
-    public void reset(){
-        this.estado=0;
-        this.running=false;
-    }
 
     /**
      * EL hilo de busqueda del servidor llama este metodo cuando encuentra el servidor.
      * @param ipServer es la direccion ip de satelink.
      */
-    public abstract void onSatelinkFound(String ipServer);
+    protected abstract void onSatelinkFound(String ipServer);
 
     /**
      * esta funcion es llamada una vez se determina que no se pudo encontrar el servidor satelink
+     * debido a un timeout
      */
-    public abstract void onNotFound();
+    protected abstract void onTimeOut();
 
     /**
      * para que usuario pueda definir su propia accion en caso de un error.
      * @param e
      */
-    public abstract void onError(Exception e);
+    protected abstract void onError(Exception e);
+
+    /**
+     * Cuando se logra recibir datos en el buffer udp, el hilo de busqueda detiene al
+     * hilo del temporizador y no se produce un timeout. sin embargo si los datos recividos no
+     * corresponden con la clave acordada por el servidor, se llama este metodo
+     * ya que no se puede saber la ip de satelink a pesar de haber recibido una respuesta en el
+     * buffer udp
+     * ip de satelink.
+     */
+    protected abstract void onNotFound();
 
 }

@@ -14,8 +14,10 @@ import com.rendidor.irsum.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    public lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
     private lateinit var navControlador: NavController
+
+    lateinit var pl:PrefLoader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +35,24 @@ class MainActivity : AppCompatActivity() {
 
         SetupNavegacion()
 
-        binding.toolbar.setOnClickListener({})
+        this.pl = PrefLoader(this)
+
+        /*
+        binding.tvToolbarTitle.setOnClickListener({
+            if(binding.tvToolbarTitle.text.equals("Ventas")){
+                binding.tvToolbarTitle.text = pl.getString(PrefLoader.Keys.manual_ip_value, "NaN")
+            } else{
+                binding.tvToolbarTitle.text = "Ventas"
+            }
+        })
+        */
+
+        binding.toolbar.setOnLongClickListener {
+            var infoDialog = InfoIpDialog()
+            infoDialog.show(supportFragmentManager, "Satelink IP")
+            return@setOnLongClickListener true
+        }
+
     }
 
     /**

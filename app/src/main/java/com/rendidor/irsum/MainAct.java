@@ -23,7 +23,7 @@ public class MainAct extends AppCompatActivity {
     /* access modifiers changed from: protected */
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_main);
+        //setContentView(R.layout.act_main);
         //setupActionBarWithNavController(findNavController(R.id.main_nav));
 
         //start_set_cursor_thread(this);

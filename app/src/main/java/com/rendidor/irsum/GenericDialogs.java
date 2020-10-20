@@ -9,7 +9,7 @@ public class GenericDialogs {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         builder.setMessage(msg)
-                .setCancelable(false);
+                .setCancelable(true);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }

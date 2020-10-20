@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rendidor.irsum.Definiciones.ItemVenta
 import com.rendidor.irsum.databinding.ItemVentaBinding
+import java.lang.IndexOutOfBoundsException
 import java.util.*
 
 class ItemVentaAdapter(var listaCompra : LinkedList<ItemVenta>):RecyclerView.Adapter<ItemVentaAdapter.ItemVentaViewHolder>(){
@@ -24,8 +25,10 @@ class ItemVentaAdapter(var listaCompra : LinkedList<ItemVenta>):RecyclerView.Ada
     }
 
     fun removeItem(i:Int){
-        listaCompra.removeAt(i)
-        notifyItemRemoved(i)
+        try{ // cuando se oprime el boton de remover varias veces puede ocurrir indexOutofBounds
+            listaCompra.removeAt(i)
+            notifyItemRemoved(i)
+        } catch (e:IndexOutOfBoundsException){ } //do nothing just to avoid crash
     }
 
 

@@ -7,10 +7,12 @@
     <string name="app_name">IRSUM</string>
 
     <string name="nav_label_fragment_settings">Configuracion</string>
-    <string name ="imgbtn_contentDescription">Para ir al fragmento de configuracion</string>
+    <string name="imgbtn_contentDescription">Para ir al fragmento de configuracion</string>
     <string name="nav_label_fragment_home">Ventas</string>
 
     <string name="btn_toolbar_imprimir">"  Imprimir"</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
