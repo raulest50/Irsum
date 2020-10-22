@@ -9,7 +9,15 @@ import com.rendidor.irsum.databinding.ItemVentaBinding
 import java.lang.IndexOutOfBoundsException
 import java.util.*
 
-class ItemVentaAdapter(var listaCompra : LinkedList<ItemVenta>):RecyclerView.Adapter<ItemVentaAdapter.ItemVentaViewHolder>(){
+/**
+ * listaCompra: LinkedList que contiene todos los ItemVenta correpsondientes a una operacion de Venta
+ *
+ * ntFragment()->Unit: funcion callbak, que es pasada por el parent fragment. cuando se modifica la
+ * cantidad de un ItemVenta, La suma del total de la venta debe actualizarse. Este callback es pasado
+ * por el fragmento padre y el Adapter lo invoca cuando hay cambios en listaCompra.
+ */
+class ItemVentaAdapter(var listaCompra : LinkedList<ItemVenta>, var ntFragment:()->Unit):RecyclerView.Adapter<ItemVentaAdapter.ItemVentaViewHolder>(){
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemVentaViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -28,6 +36,7 @@ class ItemVentaAdapter(var listaCompra : LinkedList<ItemVenta>):RecyclerView.Ada
         try{ // cuando se oprime el boton de remover varias veces puede ocurrir indexOutofBounds
             listaCompra.removeAt(i)
             notifyItemRemoved(i)
+            ntFragment() // se actualiza el label, suma_ListaCompra y se notifica orondo por websocket
         } catch (e:IndexOutOfBoundsException){ } //do nothing just to avoid crash
     }
 
@@ -44,6 +53,8 @@ class ItemVentaAdapter(var listaCompra : LinkedList<ItemVenta>):RecyclerView.Ada
             binding.btnCantidad.setOnClickListener({dialogModCantidad()})
             binding.btnAddOne.setOnClickListener({addOne(item, binding)})
             binding.btnMinusOne.setOnClickListener({minusOne(item, binding)})
+            if(!item.isFraccionable()) binding.imgbtnFraccionar.visibility = View.GONE
+            else binding.imgbtnFraccionar.visibility = View.VISIBLE
         }
 
         private fun dialogModCantidad() {
@@ -67,6 +78,7 @@ class ItemVentaAdapter(var listaCompra : LinkedList<ItemVenta>):RecyclerView.Ada
         fun updateFieldViews(item:ItemVenta, binding:ItemVentaBinding){
             binding.btnCantidad.text = Integer.toString(item.getCantidad())
             binding.tvSubtotal.text = Integer.toString(item.getSubTotal())
+            ntFragment()
         }
 
     }

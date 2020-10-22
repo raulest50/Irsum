@@ -22,49 +22,89 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appbarLayout">
 
+
+            <!--inputType="textPersonName" es necesario para que al hacer enter lo tome como un
+              comando y no como nueva linea ya que el enter debe iniciar la busqueda del producto-->
             <EditText
                 android:id="@+id/et_codigo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint=""
                 android:textSize="30dp"
-                android:inputType="textPersonName"
-                 />
+                android:inputType="textPersonName"/>
+
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_horizontal">
 
-                <Button
-                    android:id="@+id/button5"
+                <ImageButton
+                    android:id="@+id/btn_registrar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    android:text="Registrar"
+                    app:srcCompat="@drawable/ic_deal_svgrepo_com"/>
+
+                <!--boton para agregar un producto a la lista de manera manual-->
+                <ImageButton
+                    android:id="@+id/btn_add_prod"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Button" />
+                    android:text=""
+                    app:srcCompat="@drawable/ic_barcode_svgrepo_com"/>
 
                 <Button
-                    android:id="@+id/button4"
+                    android:id="@+id/btn_nocod"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Button" />
-
-                <Button
-                    android:id="@+id/button3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Button" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:text="No Cod" />
 
 
                 <ImageButton
                     android:id="@+id/imgbtn_clear"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="0.1"
                     app:srcCompat="@drawable/ic_baseline_delete_24"
                     />
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30dp"
+                    android:textColor="@color/suma_labels"
+                    android:text="Suma: " />
+
+                <TextView
+                    android:id="@+id/tv_suma_venta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30dp"
+                    android:textColor="@color/suma_labels"
+                    android:text="0" />
+
+                <TextView
+                    android:id="@+id/tv_dollarSing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30dp"
+                    android:textColor="@color/suma_labels"
+                    android:text=" $"
+                    />
 
             </LinearLayout>
 

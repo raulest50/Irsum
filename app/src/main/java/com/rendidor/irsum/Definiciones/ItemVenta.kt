@@ -10,12 +10,12 @@ class ItemVenta {
      * transitorio porque en Orondo no se desea guardar este en mongo
      */
     @Transient
-    private lateinit var p: Producto
+    private var p: Producto
 
     /**
      * codigo del producto
      */
-    private lateinit var producto_id: String
+    private var producto_id: String
 
     private var Cantidad = 0
 
@@ -64,10 +64,10 @@ class ItemVenta {
     }
 
     fun setUnitPrecio(nuevoPrecio: Int) {
-        if (nuevoPrecio >= p!!.costo) {
+        if (nuevoPrecio >= p.costo) {
             UnitPrecio = nuevoPrecio
         } else {
-            UnitPrecio = p!!.costo
+            UnitPrecio = p.costo
         }
         RefreshSubTotal()
     }
@@ -141,6 +141,13 @@ class ItemVenta {
 
     fun isFraccionado(): Boolean {
         return fraccionado
+    }
+
+    /**
+     * retorna atributo del producto que indica si se puede no fraccionar en una operacion de venta
+     */
+    fun isFraccionable():Boolean{
+        return p.fraccionable
     }
 
 

@@ -57,7 +57,7 @@ public abstract class SatelinkFinder {
             //this.context = context;
             this.wifiMgr = wifiMgr;
         } catch (SocketException e) {
-            socket.close();
+            CloseSocket();
             FL.e("SatelinkFinder Constructor", e);
             this.onError(e);
         }
@@ -107,8 +107,8 @@ public abstract class SatelinkFinder {
                         tmout.interrupt(); // se detiene el hilo de temporizador
                         if ((boolean) ans.get(0)) onSatelinkFound((String) ans.get(1));
                         else onNotFound();
-                    } catch(NullPointerException e){
-                        socket.close();
+                    } catch(NullPointerException | IndexOutOfBoundsException e){
+                        CloseSocket();
                         onError(e);
                     }
                 }
@@ -122,7 +122,7 @@ public abstract class SatelinkFinder {
                 @Override
                 public void interrupt() {
                     super.interrupt();
-                    socket.close();
+                    CloseSocket();
                     onTimeOut();
                 }
             };
@@ -175,7 +175,7 @@ public abstract class SatelinkFinder {
             onError(e);
             FL.e("Exception en UDP broadcast", e);
         }
-        socket.close();// ocurran o no una excepcion se cierra el socket.
+        CloseSocket();// ocurran o no una excepcion se cierra el socket.
         return r;
     }
 
@@ -224,6 +224,19 @@ public abstract class SatelinkFinder {
             broadcast = InetAddress.getByName("255.255.255.255");
         }
         return broadcast;
+    }
+
+    /**
+     * En fase de prubas se observo que si se alterna entre configuracion y ventas repetidas veces
+     *  puede ocurrir que socket.close() lance excepcion null pointer
+     */
+    private void CloseSocket(){
+        try{
+            socket.close();
+        } catch (NullPointerException e){
+            // principalmente para impedir crash de la applicacion
+            onError(e);
+        }
     }
 
 

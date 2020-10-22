@@ -1,4 +1,4 @@
-package com.rendidor.irsum
+package com.rendidor.irsum.fragmentDialogs
 
 import android.content.Context
 import android.content.Context.WIFI_SERVICE
@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import com.rendidor.irsum.PrefLoader
 import com.rendidor.irsum.databinding.FragmentInfoIpDialogBinding
 import com.rendidor.irsum.remote.SatelinkFinder
 import java.lang.Exception
@@ -28,7 +29,7 @@ class InfoIpDialog : DialogFragment() {
     private lateinit var elContexto:Context
 
 
-    private lateinit var pl:PrefLoader
+    private lateinit var pl: PrefLoader
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentInfoIpDialogBinding.inflate(layoutInflater, container, false)
@@ -36,7 +37,7 @@ class InfoIpDialog : DialogFragment() {
 
 
 
-        isCancelable = false // no se cierra tocando afuera del dialog.
+        isCancelable = true // con false no se cierra tocando afuera del dialog.
         return view
     }
 

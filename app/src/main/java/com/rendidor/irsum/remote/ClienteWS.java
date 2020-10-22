@@ -10,8 +10,8 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
-import com.rendidor.irsum.GenericDialogs;
-import com.rendidor.irsum.MainAct;
+import com.rendidor.irsum.MainActivity;
+import com.rendidor.irsum.fragmentDialogs.GenericDialogs;
 
 
 import org.json.simple.JSONObject;
@@ -32,7 +32,7 @@ public class ClienteWS {
     String server_ip;
     String ws_host;
 
-    MainAct context;
+    MainActivity context;
 
     String nombre; // nombre asignado a la tablet por el usuario
     String mac; // permite que aunque a varios dispositivos el user le asigne mismos nombres, que cada tablet tenga un id unico
@@ -58,7 +58,7 @@ public class ClienteWS {
      */
     public final String PROPOSITO_UPDT_VENTA = "ACTUALIZAR_ESTADO_VENTA";
 
-    public ClienteWS(MainAct context){
+    public ClienteWS(MainActivity context){
         this.context =context;
         // la ip del servidor guardada con javapreferences
         SharedPreferences pre = context.getSharedPreferences("configuracion_irsum", 0);
@@ -93,7 +93,7 @@ public class ClienteWS {
                 }
             });
         } catch (IOException e){
-            GenericDialogs.ShowDiaglog("Exception WebSocket client class", e.getMessage(), context);
+            GenericDialogs.Dialogs.ShowDiaglog("Exception WebSocket client class", e.getMessage(), context);
         }
     }
 

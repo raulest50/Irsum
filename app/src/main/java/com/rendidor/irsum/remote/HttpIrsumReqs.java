@@ -1,11 +1,7 @@
 package com.rendidor.irsum.remote;
 
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-
 import com.rendidor.irsum.Definiciones.ItemVenta;
 import com.rendidor.irsum.Definiciones.Producto;
-import com.rendidor.irsum.MainAct;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,8 +9,6 @@ import org.json.simple.JSONValue;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
 
 import okhttp3.Call;
 import okhttp3.HttpUrl;

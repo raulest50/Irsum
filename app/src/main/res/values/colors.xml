@@ -6,7 +6,11 @@
 
     <color name="gradient_toolabar_start">#434273</color>
     <color name="gradient_toolabar_end">#2D8CFD</color>
+
     <color name="transparente">#00000000</color>
 
     <color name="button_stroke">#000000</color>
+
+    <!--Color para los labels Suma: 0 $ en el fragmento de ventas -->
+    <color name="suma_labels">#07a858</color>
 </resources>

@@ -43,14 +43,18 @@
 
                     />
 
-                <Button
+
+                <!-- android:drawableEnd y similares solo son compatibles api>21 (4.4)
+                para compatibilidad de vector drawables debe usarse app:drawableEndCompat y afines.
+                al parecer androidx agrego compatibilidad hacia atras de los vector drawables y por
+                eso la compatibilidad se logra con los app:-->
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_imprimir"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/btn_toolbar_imprimir"
                     android:textSize="20dp"
-                    android:drawableEnd="@drawable/ic_twotone_local_printshop_50"
-
+                    app:drawableEndCompat="@drawable/ic_twotone_local_printshop_50"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/balysv_img_button"
                     app:layout_constraintTop_toTopOf="parent"

@@ -1,16 +1,13 @@
 package com.rendidor.irsum
 
-import android.app.ProgressDialog.show
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.rendidor.irsum.databinding.ActivityMainBinding
+import com.rendidor.irsum.fragmentDialogs.InfoIpDialog
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,15 +34,6 @@ class MainActivity : AppCompatActivity() {
 
         this.pl = PrefLoader(this)
 
-        /*
-        binding.tvToolbarTitle.setOnClickListener({
-            if(binding.tvToolbarTitle.text.equals("Ventas")){
-                binding.tvToolbarTitle.text = pl.getString(PrefLoader.Keys.manual_ip_value, "NaN")
-            } else{
-                binding.tvToolbarTitle.text = "Ventas"
-            }
-        })
-        */
 
         binding.toolbar.setOnLongClickListener {
             var infoDialog = InfoIpDialog()

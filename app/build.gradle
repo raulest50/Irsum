@@ -69,7 +69,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
-    // String interpolation like kotlin
+    // String interpolation like kotlin en java
     compileOnly 'com.antkorwin:better-strings:0.4'
     annotationProcessor 'com.antkorwin:better-strings:0.4'
 
@@ -79,11 +79,11 @@ dependencies {
     implementation 'com.googlecode.json-simple:json-simple:1.1'
 
     // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
-    // solo se puede usar esta vercion para api 22 o mayor
+    // solo se puede usar esta version para api 22 o mayor
     //implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.8.1'
 
     // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
-    // para hacer los http request a satelink. toca usar est vercion para poder usar api 19
+    // para hacer los http request a satelink. toca usar esta vercion para poder usar api 19
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.12'
 
     /**
@@ -104,6 +104,8 @@ dependencies {
     //https://github.com/balysv/material-ripple
     //ripple fue agregado ejn api 21. con balysv se puede usar hasta api 14.
     implementation 'com.balysv:material-ripple:1.0.2'
+
+    implementation 'com.caverock:androidsvg-aar:1.4'
 
     //Navigation components
     def nav_version = "2.3.0"
