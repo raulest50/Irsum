@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="et_codigo_hint">codigo</string>
+    <string name="et_codigo_hint">ingresar codigo</string>
+    <string name="tv_suma_label">Suma:&#160;</string>
+    <string name="tv_suma_dollar_sing">&#160;$</string>
+
+    <string name="tv_suma_value_init">0</string>
+
+    <string name="btn_clear_content_descri_">borra todos los productos de la lista</string>
+    <string name="btn_manual_content_descri_">lanza asistente para buscar un producto</string>
+    <string name="btn_registrar_venta_content_descri_">registra la venta en la base de datos</string>
+
+    <string name="btn_nocod_text">No Cod</string>
 
 </resources>

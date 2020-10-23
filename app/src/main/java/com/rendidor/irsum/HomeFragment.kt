@@ -64,22 +64,21 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        act = this.activity as MainActivity
+
         listaCompra = LinkedList() // LinkedList para usar addFirst(), ArrayList solo tiene add()
 
         //recycler view list initialization
         viewManager = LinearLayoutManager(this.activity)
-        viewAdapter = ItemVentaAdapter(listaCompra, {ntFragment()})
+        viewAdapter = ItemVentaAdapter(listaCompra, {ntFragment()}, act.supportFragmentManager)
 
         binding.recyclerViewListaCompra.layoutManager = viewManager
         binding.recyclerViewListaCompra.adapter = viewAdapter
 
         sp = this.buildSoundPool()
 
-        act = this.activity as MainActivity
         prefloader = PrefLoader(act)
-        act.binding.btnImprimir.setOnClickListener({
-
-        })
+        act.binding.btnImprimir.setOnClickListener{}
 
         binding.imgbtnClear.setOnClickListener({
             if(!listaCompra.isEmpty())

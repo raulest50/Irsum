@@ -3,9 +3,11 @@ package com.rendidor.irsum
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rendidor.irsum.Definiciones.ItemVenta
 import com.rendidor.irsum.databinding.ItemVentaBinding
+import com.rendidor.irsum.fragmentDialogs.ModNumDialog
 import java.lang.IndexOutOfBoundsException
 import java.util.*
 
@@ -16,7 +18,9 @@ import java.util.*
  * cantidad de un ItemVenta, La suma del total de la venta debe actualizarse. Este callback es pasado
  * por el fragmento padre y el Adapter lo invoca cuando hay cambios en listaCompra.
  */
-class ItemVentaAdapter(var listaCompra : LinkedList<ItemVenta>, var ntFragment:()->Unit):RecyclerView.Adapter<ItemVentaAdapter.ItemVentaViewHolder>(){
+class ItemVentaAdapter(var listaCompra: LinkedList<ItemVenta>, var ntFragment: () -> Unit,
+                       var supportFragmentManager: FragmentManager):
+        RecyclerView.Adapter<ItemVentaAdapter.ItemVentaViewHolder>(){
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemVentaViewHolder {
@@ -50,15 +54,16 @@ class ItemVentaAdapter(var listaCompra : LinkedList<ItemVenta>, var ntFragment:(
             binding.tvSubtotal.text = Integer.toString(item.getSubTotal())
             binding.btnCantidad.text = Integer.toString(item.getCantidad())
             binding.tvSubtotal.text = Integer.toString(item.getSubTotal())
-            binding.btnCantidad.setOnClickListener({dialogModCantidad()})
+            binding.btnCantidad.setOnClickListener({dialogModCantidad(item)})
             binding.btnAddOne.setOnClickListener({addOne(item, binding)})
             binding.btnMinusOne.setOnClickListener({minusOne(item, binding)})
             if(!item.isFraccionable()) binding.imgbtnFraccionar.visibility = View.GONE
             else binding.imgbtnFraccionar.visibility = View.VISIBLE
         }
 
-        private fun dialogModCantidad() {
-            TODO("Not yet implemented")
+        private fun dialogModCantidad(item:ItemVenta) {
+            var modNumDialog = ModNumDialog(item, adapterPosition, this@ItemVentaAdapter)
+            modNumDialog.show(supportFragmentManager, "Modificar Cantidad")
         }
 
         fun minusOne(item:ItemVenta, binding:ItemVentaBinding){

@@ -53,7 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/btn_toolbar_imprimir"
-                    android:textSize="20dp"
+                    android:textSize="20sp"
                     app:drawableEndCompat="@drawable/ic_twotone_local_printshop_50"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/balysv_img_button"
