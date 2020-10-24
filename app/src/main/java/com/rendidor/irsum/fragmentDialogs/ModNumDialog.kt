@@ -64,9 +64,8 @@ class ModNumDialog(var item:ItemVenta, var itemIndex:Int, var adapter:ItemVentaA
                 if(N==0) adapter.removeItem(itemIndex)
                 if(N>=1){
                     item.setCantidad(etCantidad.text.toString().toInt())
-                    adapter.notifyItemChanged(itemIndex) // se actualiza el item en el recycler view
-                    adapter.ntFragment() // se actualiza la suma_listaCompra y el textview de suma en home fragment
                 }
+                adapter.AplicarCambios()
                 dismiss()
             } catch (e:NumberFormatException){}
         }

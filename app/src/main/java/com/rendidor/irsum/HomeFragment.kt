@@ -15,9 +15,9 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.rendidor.irsum.Definiciones.ItemVenta
 import com.rendidor.irsum.databinding.FragmentHomeBinding
 import com.rendidor.irsum.fragmentDialogs.GenericDialogs
+import com.rendidor.irsum.fragmentDialogs.ManualRegDialog
 import com.rendidor.irsum.remote.HttpIrsumReqs
 import com.rendidor.irsum.remote.SatelinkFinder
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +25,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.Exception
-import java.util.*
 
 
 /**
@@ -42,11 +41,8 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
 
-    private lateinit var viewAdapter: ItemVentaAdapter
+    lateinit var itemVentaAdapter: ItemVentaAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
-
-    private lateinit var listaCompra : LinkedList<ItemVenta>
-    private var suma_listaCompra = 0
 
     private lateinit var sp:SoundPool
 
@@ -66,28 +62,30 @@ class HomeFragment : Fragment() {
 
         act = this.activity as MainActivity
 
-        listaCompra = LinkedList() // LinkedList para usar addFirst(), ArrayList solo tiene add()
 
         //recycler view list initialization
         viewManager = LinearLayoutManager(this.activity)
-        viewAdapter = ItemVentaAdapter(listaCompra, {ntFragment()}, act.supportFragmentManager)
+        itemVentaAdapter = ItemVentaAdapter(binding.tvSumaVenta, {ntFragment()}, act.supportFragmentManager)
 
         binding.recyclerViewListaCompra.layoutManager = viewManager
-        binding.recyclerViewListaCompra.adapter = viewAdapter
+        binding.recyclerViewListaCompra.adapter = itemVentaAdapter
 
         sp = this.buildSoundPool()
 
         prefloader = PrefLoader(act)
-        act.binding.btnImprimir.setOnClickListener{}
 
-        binding.imgbtnClear.setOnClickListener({
-            if(!listaCompra.isEmpty())
+        //act.binding.btnImprimir.setOnClickListener{}
+
+        binding.btnAddProdManual.setOnClickListener{
+            var manualRegisDialog = ManualRegDialog(this, prefloader)
+            manualRegisDialog.show(act.supportFragmentManager, "Codigo Manualmente")
+        }
+
+        binding.imgbtnClear.setOnClickListener{
+            if(itemVentaAdapter.itemCount>0)
                 GenericDialogs.ConfirmationDiaglo("Esta Seguro de borrar la lista de compra?", act, {
-                    listaCompra.clear()
-                    viewAdapter.notifyDataSetChanged()
-                    ntFragment()
-                })
-        })
+                    itemVentaAdapter.ClearListaCompra() })
+        }
 
         return view
     }
@@ -135,6 +133,7 @@ class HomeFragment : Fragment() {
         } else binding.etCodigo.setOnKeyListener(null)
     }
 
+
     /**
      * Lanza una corrutina para hacer el httprequest.
      * las corrutinas alternan de manera automatica la ejecucion entre el hilo principal y otros
@@ -157,11 +156,7 @@ class HomeFragment : Fragment() {
                                 "con el lector, intente escanenando nuevamente. Si el problema persiste comuniquese \n " +
                                 "con la administracion", act)
             }
-            else{
-                listaCompra.addFirst(lit[0])
-                viewAdapter.notifyDataSetChanged()
-                ntFragment() // se actualiza la suma de la compra, su label asociado, y se notifica por websocket a orondo
-            }
+            else{ itemVentaAdapter.AgregarItemVenta(lit[0]) }
             // un lector de codigo de barras puede generar varios enters, con este delay
             // se reactiva el listening al enter del editText 100ms despues para eliminar la posibilidad
             // de un trigger indeseado de BuscarProducto()
@@ -208,15 +203,10 @@ class HomeFragment : Fragment() {
     }
 
     /**
-     * Actualiza la etiqueta de suma, la variable suma y
-     *
+     * Realizar alguna accion cada que ocurra un cambio en listaCompra
      */
     fun ntFragment(){
-        var suma = 0
-        // la variable es it por defecto, para usar nombre personalizdo al estilo java (x)->{ code }
-        listaCompra.forEach{suma+= it.getSubTotal()} //  usar: listaCompra.forEach{x -> suma+= x.getSubTotal()}
-        suma_listaCompra = suma
-        binding.tvSumaVenta.text = suma_listaCompra.toString()
+
     }
 
     /**

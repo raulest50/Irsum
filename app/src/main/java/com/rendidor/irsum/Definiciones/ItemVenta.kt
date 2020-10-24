@@ -131,13 +131,10 @@ class ItemVenta {
         return subTotal
     }
 
-    fun getUnitPrecio(): Int {
-        return UnitPrecio
-    }
+    fun getUnitPrecio() = UnitPrecio
+    fun getProducto_id() = producto_id
+    fun getProducto_last_updt() = p.last_updt
 
-    fun getProducto_id(): String? {
-        return producto_id
-    }
 
     fun isFraccionado(): Boolean {
         return fraccionado

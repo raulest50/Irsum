@@ -51,7 +51,7 @@
 
                 <!--boton para agregar un producto a la lista de manera manual-->
                 <ImageButton
-                    android:id="@+id/btn_add_prod"
+                    android:id="@+id/btn_add_prod_manual"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

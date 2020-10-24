@@ -8,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.rendidor.irsum.databinding.ActivityMainBinding
 import com.rendidor.irsum.fragmentDialogs.InfoIpDialog
+import com.rendidor.irsum.fragmentDialogs.ManualRegDialog
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,7 +34,6 @@ class MainActivity : AppCompatActivity() {
         SetupNavegacion()
 
         this.pl = PrefLoader(this)
-
 
         binding.toolbar.setOnLongClickListener {
             var infoDialog = InfoIpDialog()

@@ -42,38 +42,47 @@ public class HttpIrsumReqs{
 
             String r;
             Call call = client.newCall(request);
-            try (Response res = call.execute()) { r = res.body().string();
-            }
+            try (Response res = call.execute()) { r = res.body().string();}
+
             Object obj = JSONValue.parse(r);
             JSONArray json_array = (JSONArray) obj;
+            lpr = JsonArray2ArrayList(json_array);
 
-            for (Object x : json_array) {
-                JSONObject y = (JSONObject) x;
-
-                //int costo = ((Number) y.get("costo")).intValue(); casting directo a int, Integer etc no funciona
-                // tomado de https://coderanch.com/t/675211/java/JSON-java-lang-Integer-cast
-
-                String _id = y.get("_id").toString();
-                String descripcion = y.get("descripcion").toString();
-                int costo = Integer.parseInt(y.get("costo").toString());
-                int pv_mayor = Integer.parseInt(y.get("pv_mayor").toString());
-                int pv_publico = Integer.parseInt(y.get("pv_publico").toString());
-                Double iva = Double.parseDouble(y.get("iva").toString());
-                String last_updt = y.get("last_updt").toString();
-                String keywords = y.get("keywords").toString();
-                boolean fraccionable = Boolean.parseBoolean((y.get("fraccionable").toString()));
-                int PesoUnitario = Integer.parseInt(y.get("PesoUnitario").toString());
-                String grupo = y.get("grupo").toString();
-
-                Producto p = new Producto(_id, descripcion, costo, pv_mayor, pv_publico, iva,
-                        last_updt, keywords, fraccionable, PesoUnitario, grupo);
-                ItemVenta itv = new ItemVenta(p, 1, p.getPv_publico(), false);
-                lpr.add(itv);
-            }
         } catch (IOException e){
             e.printStackTrace();
         }
         return lpr;
+    }
+
+    /**
+     * convierte un Json Array a un Arraylist de ItemVenta
+     * @param json_array
+     * @return
+     */
+    public ArrayList<ItemVenta> JsonArray2ArrayList(JSONArray json_array){
+        ArrayList<ItemVenta> ans = new ArrayList<>();
+        for (Object x : json_array) {
+            JSONObject y = (JSONObject) x;
+            //int costo = ((Number) y.get("costo")).intValue(); casting directo a int, Integer etc no funciona
+            // tomado de https://coderanch.com/t/675211/java/JSON-java-lang-Integer-cast
+            String _id = y.get("_id").toString();
+            String descripcion = y.get("descripcion").toString();
+            int costo = Integer.parseInt(y.get("costo").toString());
+            int pv_mayor = Integer.parseInt(y.get("pv_mayor").toString());
+            int pv_publico = Integer.parseInt(y.get("pv_publico").toString());
+            Double iva = Double.parseDouble(y.get("iva").toString());
+            String last_updt = y.get("last_updt").toString();
+            String keywords = y.get("keywords").toString();
+            boolean fraccionable = Boolean.parseBoolean((y.get("fraccionable").toString()));
+            int PesoUnitario = Integer.parseInt(y.get("PesoUnitario").toString());
+            String grupo = y.get("grupo").toString();
+
+            Producto p = new Producto(_id, descripcion, costo, pv_mayor, pv_publico, iva,
+                    last_updt, keywords, fraccionable, PesoUnitario, grupo);
+            ItemVenta itv = new ItemVenta(p, 1, p.getPv_publico(), false);
+            ans.add(itv);
+        }
+        return ans;
     }
 
 
