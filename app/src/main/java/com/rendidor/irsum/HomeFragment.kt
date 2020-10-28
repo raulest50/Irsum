@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rendidor.irsum.databinding.FragmentHomeBinding
+import com.rendidor.irsum.fragmentDialogs.AddNoCodDialog
 import com.rendidor.irsum.fragmentDialogs.GenericDialogs
 import com.rendidor.irsum.fragmentDialogs.ManualRegDialog
 import com.rendidor.irsum.remote.HttpIrsumReqs
@@ -48,6 +49,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var prefloader:PrefLoader
 
+
     /**
      * al ejecutarse este metodo ya se asegura que la actividad asociada ya se inicio.
      * contrario del onCreate del fragmento, que podria ejecutarse antes que de el onCreate
@@ -74,11 +76,20 @@ class HomeFragment : Fragment() {
 
         prefloader = PrefLoader(act)
 
-        //act.binding.btnImprimir.setOnClickListener{}
+        act.binding.btnImprimir.setOnClickListener{
+            viewLifecycleOwner.lifecycleScope.launch {
+            withContext(Dispatchers.IO){HttpIrsumReqs().printRemision(prefloader.getUsedSatelinkIp(), itemVentaAdapter.getCopiaListaCompra())}
+            }
+        }
 
         binding.btnAddProdManual.setOnClickListener{
             var manualRegisDialog = ManualRegDialog(this, prefloader)
             manualRegisDialog.show(act.supportFragmentManager, "Codigo Manualmente")
+        }
+
+        binding.btnNocod.setOnClickListener{
+            var addNoCodDialog = AddNoCodDialog(this)
+            addNoCodDialog.show(act.supportFragmentManager, "Agregar item no codificado")
         }
 
         binding.imgbtnClear.setOnClickListener{

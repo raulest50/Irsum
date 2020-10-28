@@ -61,15 +61,32 @@
             </RadioGroup>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_buscar"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:text="Buscar"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp"
-            app:drawableStartCompat="@drawable/ic_global_search_svgrepo_com"/>
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_buscar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Buscar"
+                android:textSize="20sp"
+                app:drawableStartCompat="@drawable/ic_global_search_svgrepo_com" />
+
+            <Button
+                android:id="@+id/btn_salir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:text="Salir" />
+        </LinearLayout>
+
+        <include layout="@layout/alpha_num_key_layout"
+            android:id="@+id/alpha_num_keyboard_inc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_lista_busqueda"

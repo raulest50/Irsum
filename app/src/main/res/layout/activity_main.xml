@@ -67,8 +67,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:mrl_rippleDuration="300"
-                    app:mrl_rippleFadeDuration="200"
+                    app:mrl_rippleDuration="200"
+                    app:mrl_rippleFadeDuration="150"
                     app:mrl_rippleColor="@color/colorAccent"
                     app:mrl_rippleAlpha="0.7"
                     >

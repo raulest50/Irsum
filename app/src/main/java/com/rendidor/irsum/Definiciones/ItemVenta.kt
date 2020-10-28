@@ -9,7 +9,7 @@ class ItemVenta {
      * de aqui se toman los datos como codigo nombre costo etc
      * transitorio porque en Orondo no se desea guardar este en mongo
      */
-    @Transient
+    //@Transient
     private var p: Producto
 
     /**

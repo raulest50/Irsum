@@ -87,7 +87,7 @@
                     android:id="@+id/textView8"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="30sp"
+                    android:textSize="35sp"
                     android:textColor="@color/suma_labels"
                     android:text="@string/tv_suma_label" />
 
@@ -95,7 +95,7 @@
                     android:id="@+id/tv_suma_venta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="30sp"
+                    android:textSize="35sp"
                     android:textColor="@color/suma_labels"
                     android:text="@string/tv_suma_value_init" />
 
@@ -103,7 +103,7 @@
                     android:id="@+id/tv_dollarSing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="30sp"
+                    android:textSize="35sp"
                     android:textColor="@color/suma_labels"
                     android:text="@string/tv_suma_dollar_sing"
                     />

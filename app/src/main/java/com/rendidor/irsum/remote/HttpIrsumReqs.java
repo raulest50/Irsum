@@ -1,5 +1,6 @@
 package com.rendidor.irsum.remote;
 
+import com.google.gson.Gson;
 import com.rendidor.irsum.Definiciones.ItemVenta;
 import com.rendidor.irsum.Definiciones.Producto;
 
@@ -8,7 +9,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import okhttp3.Call;
 import okhttp3.HttpUrl;
@@ -53,6 +56,28 @@ public class HttpIrsumReqs{
         }
         return lpr;
     }
+
+
+    public void printRemision(String satelink_ip, LinkedList<ItemVenta> lv){
+        try {
+            Gson gson = new Gson();
+            String lv_json = new Gson().toJson(lv);
+
+            OkHttpClient client = new OkHttpClient();
+            HttpUrl.Builder urlBuilder = HttpUrl.parse("http://${satelink_ip}:3000/imprimir_remi").newBuilder();
+            urlBuilder.addQueryParameter("lista_compra", lv_json); // se agrega parameto tipo de busqueda
+            String url = urlBuilder.build().toString(); // se construye la url para get request
+
+            Request request = new Request.Builder().url(url).build();
+
+            String r;
+            Call call = client.newCall(request);
+            try (Response res = call.execute()) { r = res.body().string();}
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * convierte un Json Array a un Arraylist de ItemVenta

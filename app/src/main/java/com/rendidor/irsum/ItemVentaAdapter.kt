@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rendidor.irsum.Definiciones.ItemVenta
 import com.rendidor.irsum.databinding.ItemVentaBinding
 import com.rendidor.irsum.fragmentDialogs.ModNumDialog
+import com.rendidor.irsum.remote.HttpIrsumReqs
 import java.lang.IndexOutOfBoundsException
 import java.util.*
 
@@ -86,6 +87,10 @@ class ItemVentaAdapter(var tvSumaVenta:TextView,
         ActualizarSumaVenta() // actualiza suma venta textView
         notifyDataSetChanged() // se dibujan los cambios
         ntFragment()
+    }
+
+    public fun getCopiaListaCompra():LinkedList<ItemVenta>{
+        return listaCompra.clone() as LinkedList<ItemVenta>
     }
 
 
