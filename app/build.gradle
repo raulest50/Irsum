@@ -112,6 +112,11 @@ dependencies {
     //svg parser for android - not sure if it is necesary but anyway
     implementation 'com.caverock:androidsvg-aar:1.4'
 
+
+    // cliente MQTT - para implementar visualizacion en tiempo real de las ventas
+    // https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3
+    implementation group: 'org.eclipse.paho', name: 'org.eclipse.paho.client.mqttv3', version: '1.2.5'
+
     //Navigation components
     def nav_version = "2.3.0"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"

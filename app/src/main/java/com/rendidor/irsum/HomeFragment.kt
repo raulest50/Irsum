@@ -7,25 +7,32 @@ import android.media.SoundPool
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
+import com.rendidor.irsum.Definiciones.ListaVentaNotifyChangeMsg
 import com.rendidor.irsum.databinding.FragmentHomeBinding
 import com.rendidor.irsum.fragmentDialogs.AddNoCodDialog
 import com.rendidor.irsum.fragmentDialogs.GenericDialogs
 import com.rendidor.irsum.fragmentDialogs.ManualRegDialog
 import com.rendidor.irsum.remote.HttpIrsumReqs
+import com.rendidor.irsum.remote.MqttIrsumClient
 import com.rendidor.irsum.remote.SatelinkFinder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.Exception
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
+import org.eclipse.paho.client.mqttv3.MqttCallback
+import org.eclipse.paho.client.mqttv3.MqttException
+import org.eclipse.paho.client.mqttv3.MqttMessage
 
 
 /**
@@ -49,6 +56,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var prefloader:PrefLoader
 
+    private lateinit var mqttIrsumClient: MqttIrsumClient
+
 
     /**
      * al ejecutarse este metodo ya se asegura que la actividad asociada ya se inicio.
@@ -67,7 +76,7 @@ class HomeFragment : Fragment() {
 
         //recycler view list initialization
         viewManager = LinearLayoutManager(this.activity)
-        itemVentaAdapter = ItemVentaAdapter(binding.tvSumaVenta, {ntFragment()}, act.supportFragmentManager)
+        itemVentaAdapter = ItemVentaAdapter(binding.tvSumaVenta, { ntFragment() }, act.supportFragmentManager)
 
         binding.recyclerViewListaCompra.layoutManager = viewManager
         binding.recyclerViewListaCompra.adapter = itemVentaAdapter
@@ -95,7 +104,8 @@ class HomeFragment : Fragment() {
         binding.imgbtnClear.setOnClickListener{
             if(itemVentaAdapter.itemCount>0)
                 GenericDialogs.ConfirmationDiaglo("Esta Seguro de borrar la lista de compra?", act, {
-                    itemVentaAdapter.ClearListaCompra() })
+                    itemVentaAdapter.ClearListaCompra()
+                })
         }
 
         return view
@@ -115,6 +125,22 @@ class HomeFragment : Fragment() {
             val st = CustomSFinder(7000, act.getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager)
             st.Scan() // cada que se inicia el fragmento se busca la ip del servidor
         }
+
+        // se conecta al Broker
+        viewLifecycleOwner.lifecycleScope.launch {withContext(Dispatchers.IO){ IniciarMqtt() }}
+    }
+
+    /**
+     * sirve para instanciar un Obj para comunicaicon Mqtt y se conecta al broker.
+     * la funcion de conectar puede bloquear la UI.
+     */
+    suspend fun IniciarMqtt(){
+        try {
+            mqttIrsumClient = MqttIrsumClient(prefloader.sp.getString(PrefLoader.user_defined_name, "default"))
+            mqttIrsumClient.Conectar(PushCallback(), prefloader.getUsedSatelinkIp()) // se conecta al broker
+        } catch (e: MqttException){
+            Log.println(Log.ERROR, "MqttComm", e.message)
+        }
     }
 
     override fun onDestroyView() {
@@ -133,10 +159,10 @@ class HomeFragment : Fragment() {
      * por compatibilidad se retorna true en caso de enter y false en caso de cualquier otro key
      * al parecer indicar que el evento se consume puede inhibir el ingreso de algunos caracteres
      */
-    fun EtCodigoListenerEnabled(enable:Boolean){
+    fun EtCodigoListenerEnabled(enable: Boolean){
         if(enable){
             binding.etCodigo.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-                if (keyCode == 66 && !binding.etCodigo.text.equals("")){
+                if (keyCode == 66 && !binding.etCodigo.text.equals("")) {
                     BuscarProducto(binding.etCodigo.text.toString())
                     return@OnKeyListener true // indica que el evento si se consumio
                 } else return@OnKeyListener false // el evento no se consume
@@ -150,7 +176,7 @@ class HomeFragment : Fragment() {
      * las corrutinas alternan de manera automatica la ejecucion entre el hilo principal y otros
      * hilos de forma que no se bloquee la GUI, de manera trasparente para el programador
      */
-    fun BuscarProducto(busqueda:String){
+    fun BuscarProducto(busqueda: String){
         EtCodigoListenerEnabled(false) // se inhabilita escuhca de enters en el campo de texto
         binding.etCodigo.setText("")
 
@@ -217,7 +243,20 @@ class HomeFragment : Fragment() {
      * Realizar alguna accion cada que ocurra un cambio en listaCompra
      */
     fun ntFragment(){
+        if(mqttIrsumClient.isConnected){
+            mqttIrsumClient.Send(Gson().toJson(
+                    ListaVentaNotifyChangeMsg(mqttIrsumClient.clientId, itemVentaAdapter.getCopiaListaCompra())))
+        }
+    }
 
+    inner class PushCallback:MqttCallback{
+
+        override fun connectionLost(cause: Throwable?) {
+        }
+        override fun messageArrived(topic: String?, message: MqttMessage?) {
+        }
+        override fun deliveryComplete(token: IMqttDeliveryToken?) {
+        }
     }
 
     /**
@@ -228,20 +267,20 @@ class HomeFragment : Fragment() {
         override fun onSatelinkFound(ipServer: String?) { // en caso de encontrar la ip del servidor
             prefloader.edit.putString(PrefLoader.autoip_value, ipServer)
             prefloader.edit.commit() // se actualiza el valor en preferencias
-            act.runOnUiThread({Toast.makeText(act, ipServer, Toast.LENGTH_SHORT).show()})
+            act.runOnUiThread({ Toast.makeText(act, ipServer, Toast.LENGTH_SHORT).show() })
         }
         // se ejcuta si no se descubre la ip de satelink en menos de TIME_OUT_MILLIS (tiempo en ms)
         override fun onTimeOut() {
-            act.runOnUiThread({Toast.makeText(act, "Servidor no encontrado", Toast.LENGTH_SHORT).show()})
+            act.runOnUiThread({ Toast.makeText(act, "Servidor no encontrado", Toast.LENGTH_SHORT).show() })
         }
         // se ejecuta si ocurre una excepcion fatal durante la busqueda de la ip del servidor
         override fun onError(e: Exception?) {
-            act.runOnUiThread({Toast.makeText(act, e?.message, Toast.LENGTH_SHORT).show()})
+            act.runOnUiThread({ Toast.makeText(act, e?.message, Toast.LENGTH_SHORT).show() })
         }
         //se ejecuta si se tiene una respuesta en menos de TIME_OUT_MILLIS, pero no es de satelink
         //entonces no ocurre timeout pero tampoco se sabe la ip de satelink.
         override fun onNotFound() {
-            act.runOnUiThread({Toast.makeText(act, "datos recibidos no coinciden con satelink", Toast.LENGTH_LONG).show()})
+            act.runOnUiThread({ Toast.makeText(act, "datos recibidos no coinciden con satelink", Toast.LENGTH_LONG).show() })
         }
     }
 
