@@ -65,6 +65,19 @@ class ItemVentaAdapter(var tvSumaVenta:TextView,
         ntFragment() // EL fragmento reacciona a los cambios de listaCompra
     }
 
+    /**
+     * Se espera usar esta funcion unicamente para restaurar la lista a partir de un saved bundle state
+     * ya que al rotar la pantalla los elementos del recycler view se pierden. Para no usar
+     * AgregarItemVenta(item) para restaurar la lista porque podria ser ineficiente, se crea este
+     * metodo. por ello no se invoca ntFragment ya que su uso es destinado unicamente a la restauracion,
+     * no para agregar productos nuevos a la lista.
+     */
+    fun RestaurarListaItemVenta(Litv:LinkedList<ItemVenta>){
+        listaCompra = Litv
+        ActualizarSumaVenta() // actualiza suma venta textView
+        notifyDataSetChanged() // se dibujan los cambios
+    }
+
     fun ClearListaCompra(){
         listaCompra.clear()
         AplicarCambios()

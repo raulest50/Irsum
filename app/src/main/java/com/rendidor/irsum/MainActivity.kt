@@ -2,18 +2,33 @@ package com.rendidor.irsum
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.View
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.google.gson.Gson
+import com.rendidor.irsum.Definiciones.ItemVenta
 import com.rendidor.irsum.databinding.ActivityMainBinding
 import com.rendidor.irsum.fragmentDialogs.InfoIpDialog
 import com.rendidor.irsum.fragmentDialogs.ManualRegDialog
+import org.json.simple.JSONArray
+import org.json.simple.JSONObject
+import org.json.simple.parser.JSONParser
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
     private lateinit var navControlador: NavController
+
+    /**
+     * Home Fragment guarda la lista de ventas en esta variable cuando se navega entre fragmentos.
+     * En la navegacion de fragmentos, estos son construidos y destruidos segun se haga la navegacion
+     * pero la actividad permacene, por lo que es ideal para el intercambio de datos entre fragmentos
+     * y para guardar datos en ciertos casos.
+     */
+    var saved_list = LinkedList<ItemVenta>()
 
     lateinit var pl:PrefLoader
 
@@ -40,7 +55,6 @@ class MainActivity : AppCompatActivity() {
             infoDialog.show(supportFragmentManager, "Satelink IP")
             return@setOnLongClickListener true
         }
-
     }
 
     /**
@@ -55,7 +69,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun SetupNavegacion(){
-
         binding.imgbtnSettings.setOnClickListener {
             navControlador.navigate(R.id.action_homeFragment_to_settingsFragment)
             binding.imgbtnSettings.visibility = View.GONE

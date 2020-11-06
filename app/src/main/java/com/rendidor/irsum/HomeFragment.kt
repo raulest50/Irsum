@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
+import com.rendidor.irsum.Definiciones.ItemVenta
 import com.rendidor.irsum.Definiciones.ListaVentaNotifyChangeMsg
 import com.rendidor.irsum.databinding.FragmentHomeBinding
 import com.rendidor.irsum.fragmentDialogs.AddNoCodDialog
@@ -25,14 +26,17 @@ import com.rendidor.irsum.fragmentDialogs.ManualRegDialog
 import com.rendidor.irsum.remote.HttpIrsumReqs
 import com.rendidor.irsum.remote.MqttIrsumClient
 import com.rendidor.irsum.remote.SatelinkFinder
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallback
 import org.eclipse.paho.client.mqttv3.MqttException
 import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.json.simple.JSONArray
+import org.json.simple.JSONObject
+import org.json.simple.parser.JSONParser
+import org.json.simple.parser.ParseException;
+import java.lang.reflect.InvocationTargetException
+import java.util.*
 
 
 /**
@@ -58,7 +62,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var mqttIrsumClient: MqttIrsumClient
 
-
+    private lateinit var mqttJob: Job
     /**
      * al ejecutarse este metodo ya se asegura que la actividad asociada ya se inicio.
      * contrario del onCreate del fragmento, que podria ejecutarse antes que de el onCreate
@@ -127,7 +131,62 @@ class HomeFragment : Fragment() {
         }
 
         // se conecta al Broker
-        viewLifecycleOwner.lifecycleScope.launch {withContext(Dispatchers.IO){ IniciarMqtt() }}
+        mqttJob = viewLifecycleOwner.lifecycleScope.launch {withContext(Dispatchers.IO){ IniciarMqtt() }}
+
+        // se restaura la lista de venta
+        try{ RestaurarLista(savedInstanceState) } catch (e:NullPointerException){}
+
+    }
+
+    /**
+     * cuando se hace una rotacion de pantalla este metodo en algun momento del cierre del fragmento
+     * se ejecuta. en outState se guarda en formato json la lista de ventas, ya que si se guarda
+     * directamente, es necesario implementar una interfaz parcelable. por lo anterior pense que
+     * era mas practico guardarlo como json. Esto es para la persistencia en caso de rotacion de la
+     * pantalla. Cuando se cambia de actividad este metodo no se dispara.
+     */
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString("save_list", Gson().toJson(itemVentaAdapter.getCopiaListaCompra()))
+        super.onSaveInstanceState(outState)
+    }
+
+
+    /**
+     * se ejecuta cuando se navega a otro fragmento y cuando se rota pantalla.
+     * se guarda la lista de venta en la actividad padre y se cancela la corrutina del mqtt
+     * para evitar que queden conexiones abiertas que interfieran con nuevas conexiones en el futuro.
+     */
+    override fun onDestroyView() {
+        act.saved_list = itemVentaAdapter.getCopiaListaCompra()
+        mqttJob.cancel()
+        // para evitar crash si se intenta desconectar antes de existir una conexion mqtt
+        try { mqttIrsumClient.Desconectar() } catch (e:InvocationTargetException){}
+        super.onDestroyView()
+        _binding = null
+    }
+
+
+    /**
+     * para lograr persistencia de los datos del recycler view ante la rotacion se usa el metodo
+     * onSaveInstanceState para guardar antes de la destruccion del fragmento. en onCreateView o en
+     * onViewCreated se reconstruye leyendo nuevamente la informacion guardada en json en el Bundle.
+     * Cuando se navega entre fragmentos onSaveInstanceState no se ejecuta por lo que en su lugar
+     * se guarda la lista en una variable dentro de la actividad padre del fragmento.
+     * por eso la restauracion tiene un if para para usar un metodo u otro segun el evento.
+     */
+    fun RestaurarLista(b:Bundle?){
+        if(act.saved_list.isEmpty()){
+            try {
+                var lista_itv = LinkedList<ItemVenta>()
+                var json_lista: JSONArray = JSONParser().parse(b?.getString("save_list")) as JSONArray
+                for (x in json_lista) {
+                    lista_itv.addLast(ItemVenta(x as JSONObject))
+                }
+                itemVentaAdapter.RestaurarListaItemVenta(lista_itv)
+            } catch (e:NullPointerException){} // en caso de que el key no exista en bundle evitar crash
+        } else {
+            itemVentaAdapter.RestaurarListaItemVenta(act.saved_list)
+        }
     }
 
     /**
@@ -143,10 +202,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 
     /**
      * https://stackoverflow.com/questions/47298935/handling-enter-key-on-edittext-kotlin-android

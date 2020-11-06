@@ -1,5 +1,6 @@
 package com.rendidor.irsum.Definiciones
 
+import org.json.simple.JSONObject
 import kotlin.math.roundToInt
 
 class ItemVenta {
@@ -50,6 +51,15 @@ class ItemVenta {
         this.UnitPrecio = UnitPrecio
         this.fraccionado = fraccionado
         RefreshSubTotal()
+    }
+
+    constructor(json_itv: JSONObject){
+        producto_id = (json_itv["producto_id"] as String)
+        UnitPrecio = (json_itv["UnitPrecio"] as Number).toInt()
+        subTotal = (json_itv["subTotal"] as Number).toInt()
+        fraccionado = json_itv["fraccionado"] as Boolean
+        Cantidad = (json_itv["Cantidad"] as Number).toInt()
+        p = Producto(json_itv["p"] as JSONObject)
     }
 
 
