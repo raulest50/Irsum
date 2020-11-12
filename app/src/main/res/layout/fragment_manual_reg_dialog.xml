@@ -53,11 +53,12 @@
                     android:text="Ultimos del Codigo" />
 
                 <RadioButton
-                    android:id="@+id/rbtn_cod_exacto"
+                    android:id="@+id/rbtn_descri"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
-                    android:text="Codigo Exacto" />
+                    android:text="Descripcion" />
+
             </RadioGroup>
         </LinearLayout>
 

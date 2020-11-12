@@ -21,16 +21,14 @@ import com.rendidor.irsum.Definiciones.ItemVenta
 import com.rendidor.irsum.Definiciones.ListaVentaNotifyChangeMsg
 import com.rendidor.irsum.databinding.FragmentHomeBinding
 import com.rendidor.irsum.fragmentDialogs.AddNoCodDialog
+import com.rendidor.irsum.fragmentDialogs.CodExactDialog
 import com.rendidor.irsum.fragmentDialogs.GenericDialogs
 import com.rendidor.irsum.fragmentDialogs.ManualRegDialog
 import com.rendidor.irsum.remote.HttpIrsumReqs
 import com.rendidor.irsum.remote.MqttIrsumClient
 import com.rendidor.irsum.remote.SatelinkFinder
 import kotlinx.coroutines.*
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
-import org.eclipse.paho.client.mqttv3.MqttCallback
-import org.eclipse.paho.client.mqttv3.MqttException
-import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.eclipse.paho.client.mqttv3.*
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
@@ -91,7 +89,7 @@ class HomeFragment : Fragment() {
 
         act.binding.btnImprimir.setOnClickListener{
             viewLifecycleOwner.lifecycleScope.launch {
-            withContext(Dispatchers.IO){HttpIrsumReqs().printRemision(prefloader.getUsedSatelinkIp(), itemVentaAdapter.getCopiaListaCompra())}
+            withContext(Dispatchers.IO){HttpIrsumReqs().printRemisionPOST(prefloader.getUsedSatelinkIp(), itemVentaAdapter.getCopiaListaCompra())}
             }
         }
 
@@ -112,6 +110,15 @@ class HomeFragment : Fragment() {
                 })
         }
 
+        binding.imgbtnCodExact.setOnClickListener{
+            var codExactDialog = CodExactDialog(this)
+            codExactDialog.show(act.supportFragmentManager, "Busqueda Codigo Exacto")
+        }
+
+        binding.btnRegistrar.setOnClickListener{
+            
+        }
+
         return view
     }
 
@@ -126,12 +133,14 @@ class HomeFragment : Fragment() {
         EtCodigoListenerEnabled(true)
 
         if(prefloader.sp.getBoolean(PrefLoader.autofind_ip, false)){ // si autoip activado
-            val st = CustomSFinder(7000, act.getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager)
+            val st = CustomSFinder(10000, act.getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager)
             st.Scan() // cada que se inicia el fragmento se busca la ip del servidor
         }
 
-        // se conecta al Broker
-        mqttJob = viewLifecycleOwner.lifecycleScope.launch {withContext(Dispatchers.IO){ IniciarMqtt() }}
+        // se conecta al Broker si mqtt habilitado en config
+        if(prefloader.sp.getBoolean(PrefLoader.mqtt_enabled, false)) {
+            mqttJob = viewLifecycleOwner.lifecycleScope.launch { withContext(Dispatchers.IO) { IniciarMqtt() } }
+        }
 
         // se restaura la lista de venta
         try{ RestaurarLista(savedInstanceState) } catch (e:NullPointerException){}
@@ -158,9 +167,12 @@ class HomeFragment : Fragment() {
      */
     override fun onDestroyView() {
         act.saved_list = itemVentaAdapter.getCopiaListaCompra()
-        mqttJob.cancel()
         // para evitar crash si se intenta desconectar antes de existir una conexion mqtt
-        try { mqttIrsumClient.Desconectar() } catch (e:InvocationTargetException){}
+
+        if(this::mqttIrsumClient.isInitialized && this::mqttJob.isInitialized){
+            mqttJob.cancel()
+            try { if(mqttIrsumClient.isConnected){ mqttIrsumClient.Desconectar() } } catch (e:InvocationTargetException){}
+        }
         super.onDestroyView()
         _binding = null
     }
@@ -298,14 +310,18 @@ class HomeFragment : Fragment() {
      * Realizar alguna accion cada que ocurra un cambio en listaCompra
      */
     fun ntFragment(){
-        if(mqttIrsumClient.isConnected){
-            mqttIrsumClient.Send(Gson().toJson(
-                    ListaVentaNotifyChangeMsg(mqttIrsumClient.clientId, itemVentaAdapter.getCopiaListaCompra())))
-        }
+        try {
+            if (mqttIrsumClient.isConnected) {
+                mqttIrsumClient.Send(Gson().toJson(
+                        ListaVentaNotifyChangeMsg(mqttIrsumClient.clientId, itemVentaAdapter.getCopiaListaCompra())))
+            }
+        } catch (e:Exception){}
     }
 
-    inner class PushCallback:MqttCallback{
-
+    inner class PushCallback:MqttCallbackExtended{
+        override fun connectComplete(reconnect: Boolean, serverURI: String?) {
+            viewLifecycleOwner.lifecycleScope.launch { withContext(Dispatchers.IO) { ntFragment() } }
+        }
         override fun connectionLost(cause: Throwable?) {
         }
         override fun messageArrived(topic: String?, message: MqttMessage?) {

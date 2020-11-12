@@ -15,6 +15,7 @@ import com.rendidor.irsum.fragmentDialogs.ManualRegDialog
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
+import java.lang.IllegalArgumentException
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -70,9 +71,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun SetupNavegacion(){
         binding.imgbtnSettings.setOnClickListener {
-            navControlador.navigate(R.id.action_homeFragment_to_settingsFragment)
-            binding.imgbtnSettings.visibility = View.GONE
-            binding.btnImprimir.visibility = View.GONE
+            try {
+                navControlador.navigate(R.id.action_homeFragment_to_settingsFragment)
+                binding.imgbtnSettings.visibility = View.GONE
+                binding.btnImprimir.visibility = View.GONE
+            } catch (e:IllegalArgumentException){ } // en caso de presionar varias veces boton
+            // de ir a configuracion para evitar crash.
         }
     }
 

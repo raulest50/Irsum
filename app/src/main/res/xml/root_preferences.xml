@@ -30,6 +30,14 @@
             app:summary="@string/et_nodename_summary"
             />
 
+        <SwitchPreference
+            app:key="stkey_mqtt_enabled"
+            app:title="Conexion a Orondo"
+            app:summaryOff="La tablet no reportara el estado de la lista de venta a Orondo"
+            app:summaryOn="todo cambio en la lista de ventas sera repotado a Orondo"
+            app:defaultValue="true"
+            />
+
     </PreferenceCategory>
 
 

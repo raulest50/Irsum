@@ -58,6 +58,13 @@
                     android:contentDescription="@string/btn_manual_content_descri_"
                     app:srcCompat="@drawable/ic_barcode_svgrepo_com"/>
 
+                <ImageButton
+                    android:id="@+id/imgbtn_cod_exact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    app:srcCompat="@drawable/ic_bar_code_svgrepo_com" />
+
                 <Button
                     android:id="@+id/btn_nocod"
                     android:layout_width="wrap_content"
@@ -80,8 +87,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:elevation="3dp"
                 android:paddingTop="5dp"
-                android:paddingBottom="5dp">
+                android:paddingBottom="15dp">
 
                 <TextView
                     android:id="@+id/textView8"
@@ -95,7 +103,7 @@
                     android:id="@+id/tv_suma_venta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="35sp"
+                    android:textSize="40sp"
                     android:textColor="@color/suma_labels"
                     android:text="@string/tv_suma_value_init" />
 

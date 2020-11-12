@@ -29,5 +29,6 @@ class PrefLoader(context:Context) {
         val autoip_value = "stkey_settings_autoip_value"
         val manual_ip_value = "stkey_settings_serverip_txf"
         val user_defined_name = "et_serverip_summary"
+        val mqtt_enabled = "stkey_mqtt_enabled"
     }
 }

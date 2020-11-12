@@ -1,115 +1,47 @@
 package com.rendidor.irsum.fragmentDialogs
 
-import android.content.Context
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.rendidor.irsum.HomeFragment
-import com.rendidor.irsum.PrefLoader
+import com.rendidor.irsum.R
+import com.rendidor.irsum.databinding.FragmentCodExactDialogBinding
 import com.rendidor.irsum.databinding.FragmentManualRegDialogBinding
-import com.rendidor.irsum.remote.HttpIrsumReqs
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.lang.IndexOutOfBoundsException
-import java.util.*
-import kotlin.properties.Delegates
 
 
-/**
- * En el redmi8 (android 9) funciona normal del dialog fragment con constrained Layout y con
- * FrameLayout, pero en android 4.4 solo funciono con FrameLayout. con constrained layout el
- * vio se veia por unos milisegundos y desaparecia, quedando el dialog vacio. al cambiar por
- * FrameLayout desaparecio el problema en la tabletlenovo.
- * (esto es sobre el xml del fragment)
- */
-class ManualRegDialog(var homeFragment: HomeFragment,var prefloader: PrefLoader): DialogFragment() {
+class CodExactDialog(var homeFragment: HomeFragment) : DialogFragment() {
 
-    private var _binding: FragmentManualRegDialogBinding? = null
+    private var _binding: FragmentCodExactDialogBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var elContexto:Context
-    private lateinit var imm:InputMethodManager
-
-    private lateinit var rvBusquedaAdapter: RV_BusquedaAdapter
-    private lateinit var viewManager: RecyclerView.LayoutManager
-
-    var toggle_keyboard_visible = true
-
-
-
-
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        _binding = FragmentManualRegDialogBinding.inflate(layoutInflater, container, false)
+
+        _binding = FragmentCodExactDialogBinding.inflate(layoutInflater, container, false)
         val view = binding.root
+
+        setUp_alphanum_keyboard() // se configura el teclado alfa numerico
+
+        binding.btnOk.setOnClickListener{
+            homeFragment.BuscarProducto(binding.etCodigoExact.text.toString())
+            dismiss()
+        }
+
+        binding.btnCancel.setOnClickListener{
+            dismiss()
+        }
+
         isCancelable = true
-
-        viewManager = LinearLayoutManager(this.activity)
-        rvBusquedaAdapter = RV_BusquedaAdapter(this)
-
-        binding.recyclerViewListaBusqueda.layoutManager = viewManager
-        binding.recyclerViewListaBusqueda.adapter = rvBusquedaAdapter
-
-        binding.imgbtnShowKeyboard.setOnClickListener{
-            if(toggle_keyboard_visible){
-                toggle_keyboard_visible = false
-                binding.etBusqCodigo.requestFocus()
-                binding.alphaNumKeyboardInc.alphaNumKeyboard.visibility = View.GONE
-            } else{
-                binding.alphaNumKeyboardInc.alphaNumKeyboard.visibility = View.VISIBLE
-                toggle_keyboard_visible = true
-            }
-        }
-
-        binding.btnBuscar.setOnClickListener{
-            var tp = "0"
-            //imm.hideSoftInputFromWindow(binding.imgbtnShowKeyboard.windowToken, 0)
-            binding.alphaNumKeyboardInc.alphaNumKeyboard.visibility = View.GONE
-            toggle_keyboard_visible = false
-            if(binding.rgTpBusqueda.checkedRadioButtonId == binding.rbtnDescri.id) tp="1" // ver index.js en satelink
-            if(binding.rgTpBusqueda.checkedRadioButtonId == binding.rbtnUltimosCod.id) tp="2"
-            Buscar_Mostrar(binding.etBusqCodigo.text.toString(), tp)
-        }
-
-        binding.btnSalir.setOnClickListener{dismiss()}
-
-        setUp_alphanum_keyboard()
-
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.etBusqCodigo.requestFocus()
-        //imm.showSoftInput(binding.etBusqCodigo, 0)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        elContexto = context
-        imm = elContexto.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    }
-
-
-    fun Buscar_Mostrar(busqueda:String, tp:String) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            var lit = withContext(Dispatchers.IO) {
-                HttpIrsumReqs().ProductoHttpRequest(prefloader.getUsedSatelinkIp(), tp, busqueda)
-            }
-            rvBusquedaAdapter.setListaBusqueda(LinkedList(lit))
-        }
-    }
 
     fun setUp_alphanum_keyboard(){
-        var et = binding.etBusqCodigo
+        var et = binding.etCodigoExact
         var mayus = binding.alphaNumKeyboardInc.toggbtnMayus.isChecked
         var btn_mayus = binding.alphaNumKeyboardInc.toggbtnMayus
         binding.alphaNumKeyboardInc.btnUno.setOnClickListener{et.setText("${et.text}1")}
@@ -155,7 +87,7 @@ class ManualRegDialog(var homeFragment: HomeFragment,var prefloader: PrefLoader)
 
         binding.alphaNumKeyboardInc.btnBack.setOnClickListener{
             try{ et.setText(et.text.subSequence(0, et.text.length-1))}
-        catch (e: IndexOutOfBoundsException){}
+            catch (e: IndexOutOfBoundsException){}
         }
 
         binding.alphaNumKeyboardInc.btnEspacio.setOnClickListener{et.setText("${et.text} ")}
@@ -163,6 +95,5 @@ class ManualRegDialog(var homeFragment: HomeFragment,var prefloader: PrefLoader)
 
         //binding.alphaNumKeyboardInc.btnClear.setOnClickListener{et.setText("")}
     }
-
 
 }

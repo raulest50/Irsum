@@ -14,9 +14,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import okhttp3.Call;
+import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -58,10 +60,27 @@ public class HttpIrsumReqs{
     }
 
 
-    public void printRemision(String satelink_ip, LinkedList<ItemVenta> lv){
+    /**
+     * Se deja a manera de referencia pero de ahora en adelante la impresion y cualquier
+     * otra comunicacion http que requiera de mas de 1200 caracteres debe enviarse por POST en
+     * lugar de GET ya que este ultimo tiene una limitacion de aproximadamente 1200 caracteres
+     * cuando se hacen request a satelink.
+     * @param satelink_ip
+     * @param lv
+     */
+    @Deprecated
+    public void printRemisionGET(String satelink_ip, LinkedList<ItemVenta> lv){
         try {
             Gson gson = new Gson();
             String lv_json = new Gson().toJson(lv);
+
+            System.out.println("++++++++++++++++++++++++");
+            System.out.println("++++++++++++++++++++++++");
+            System.out.println("tamano del string:");
+            System.out.println(lv_json.length());
+            System.out.println("++++++++++++++++++++++++");
+            System.out.println("++++++++++++++++++++++++");
+            System.out.println("++++++++++++++++++++++++");
 
             OkHttpClient client = new OkHttpClient();
             HttpUrl.Builder urlBuilder = HttpUrl.parse("http://${satelink_ip}:3000/imprimir_remi").newBuilder();
@@ -72,6 +91,30 @@ public class HttpIrsumReqs{
 
             String r;
             Call call = client.newCall(request);
+            try (Response res = call.execute()) { r = res.body().string();}
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Se agrega metodo POST para hacer impresion de la lista de venta. Con el uso de POST en lugar
+     * de GET se corrige satisfactoriamente el BUG de que la lista de venta no se imprimia cuando
+     * esta era muy larga (mas de 1200 caracteres aproximadamente).
+     * @param satelink_ip
+     * @param lv
+     */
+    public void printRemisionPOST(String satelink_ip, LinkedList<ItemVenta> lv){
+        try {
+            Gson gson = new Gson();
+            String lv_json = new Gson().toJson(lv);
+
+            RequestBody reqBody = new FormBody.Builder().add("lista_compra", lv_json).build();
+            Request req = new Request.Builder().url("http://${satelink_ip}:3000/imprimir_remi").post(reqBody).build();
+            OkHttpClient client = new OkHttpClient();
+            String r;
+            Call call = client.newCall(req);
             try (Response res = call.execute()) { r = res.body().string();}
         } catch (IOException e){
             e.printStackTrace();
